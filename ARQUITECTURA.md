@@ -1,4 +1,4 @@
-0Documento de Arquitectura - DBStats
+# Documento de Arquitectura - DBStats
 
 ## 1. Resumen ejecutivo
 
