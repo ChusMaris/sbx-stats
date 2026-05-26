@@ -125,6 +125,54 @@ export const fetchEquipos = async (): Promise<Equipo[]> => {
     return Array.from(dedup.values());
 };
 
+export const fetchEquiposByFilters = async (filters: {
+    temporadaId?: string;
+    categoriaId?: string;
+    fase?: string;
+    competicionNombre?: string;
+}): Promise<Array<{ id: string; nombre: string }>> => {
+    const competitions = await fetchCompeticionesByFilters({
+        temporadaId: filters.temporadaId,
+        categoriaId: filters.categoriaId,
+        fase: filters.fase,
+    });
+
+    const filteredCompetitions = filters.competicionNombre
+        ? competitions.filter((competition) => normalizeText(competition.nombre) === normalizeText(filters.competicionNombre))
+        : competitions;
+
+    const hasScopeFilter = Boolean(filters.temporadaId || filters.categoriaId || filters.fase || filters.competicionNombre);
+    if (hasScopeFilter && filteredCompetitions.length === 0) {
+        return [];
+    }
+
+    let query = supabase
+        .from('equipos')
+        .select('id, nombre_especifico, competicion_id')
+        .order('nombre_especifico');
+
+    if (filteredCompetitions.length > 0) {
+        query = query.in('competicion_id', filteredCompetitions.map((competition) => competition.id));
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const dedupeByName = new Map<string, { id: string; nombre: string }>();
+    for (const team of (data || []) as Array<{ id: number | string; nombre_especifico: string | null }>) {
+        const teamName = team.nombre_especifico || 'Equipo';
+        const normalized = normalizeText(teamName);
+        if (!dedupeByName.has(normalized)) {
+            dedupeByName.set(normalized, {
+                id: String(team.id),
+                nombre: teamName,
+            });
+        }
+    }
+
+    return Array.from(dedupeByName.values()).sort((a, b) => a.nombre.localeCompare(b.nombre));
+};
+
 export const fetchPlayerFilterCatalog = async (filters: {
     temporadaId?: string;
     categoriaId?: string;

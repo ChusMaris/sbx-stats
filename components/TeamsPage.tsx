@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownUp, ChevronDown, ChevronUp, Filter, History, Loader2, RotateCcw, Search, SlidersHorizontal, Star, StarOff, X } from 'lucide-react';
-import { fetchCategorias, fetchCompeticionesByFilters, fetchEquipos, fetchGlobalTeams, fetchTemporadas } from '../services/dataService';
+import { fetchCategorias, fetchCompeticionesByFilters, fetchEquiposByFilters, fetchGlobalTeams, fetchTemporadas } from '../services/dataService';
 import { Categoria, GlobalTeamFilters, GlobalTeamRow, Temporada } from '../types';
 import { getTeamFavorites, toggleTeamFavorite } from '../utils/teamFavoritesStorage';
 
@@ -47,11 +47,21 @@ const normalizeText = (value: string) => value
   .trim()
   .toLowerCase();
 
+const inferCompetitionPhase = (competitionName: string) => {
+  const normalized = normalizeText(competitionName || '');
+  if (normalized.includes('tercera fase')) return 'Tercera Fase';
+  if (normalized.includes('segona fase') || normalized.includes('segunda fase')) return 'Segona Fase';
+  if (normalized.includes('primera fase')) return 'Primera Fase';
+  return 'Sin fase';
+};
+
 const TeamsPage: React.FC = () => {
   const [temporadas, setTemporadas] = useState<Temporada[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState<Categoria[]>([]);
   const [competiciones, setCompeticiones] = useState<Array<{ nombre: string }>>([]);
   const [equipos, setEquipos] = useState<Array<{ id: string; nombre: string }>>([]);
+  const [fasesDisponibles, setFasesDisponibles] = useState<string[]>([]);
   const [defaultSeasonId, setDefaultSeasonId] = useState('');
 
   const [filters, setFilters] = useState<GlobalTeamFilters>({
@@ -95,17 +105,12 @@ const TeamsPage: React.FC = () => {
         const [loadedTemporadas, loadedCategorias, loadedEquipos] = await Promise.all([
           fetchTemporadas(),
           fetchCategorias(),
-          fetchEquipos(),
+          fetchEquiposByFilters({}),
         ]);
 
         setTemporadas(loadedTemporadas);
         setCategorias(loadedCategorias);
-        setEquipos(
-          loadedEquipos.map((team) => ({
-            id: String(team.id),
-            nombre: team.nombre_especifico || 'Equipo',
-          }))
-        );
+        setEquipos(loadedEquipos);
 
         const seasonId = findCurrentSeasonId(loadedTemporadas);
         setDefaultSeasonId(seasonId);
@@ -125,35 +130,127 @@ const TeamsPage: React.FC = () => {
   }, [favoriteIds.length]);
 
   useEffect(() => {
-    const loadCompetitions = async () => {
+    let isCancelled = false;
+
+    const loadAdvancedOptions = async () => {
       try {
-        const results = await fetchCompeticionesByFilters({
+        const allCompetitions = await fetchCompeticionesByFilters({
           temporadaId: filters.temporadaId,
-          categoriaId: filters.categoriaId,
-          fase: filters.fase,
+        });
+
+        if (isCancelled) return;
+
+        const categoriaScopedCompetitions = allCompetitions.filter((competition) => {
+          if (filters.fase && inferCompetitionPhase(competition.nombre || '') !== filters.fase) return false;
+          if (filters.competicionNombre && normalizeText(competition.nombre) !== normalizeText(filters.competicionNombre)) return false;
+          return true;
+        });
+
+        const availableCategoryIds = new Set(categoriaScopedCompetitions.map((competition) => String(competition.categoria_id)));
+        const availableCategorias = availableCategoryIds.size === 0
+          ? categorias
+          : categorias.filter((category) => availableCategoryIds.has(String(category.id)));
+        setCategoriasDisponibles(availableCategorias);
+
+        let effectiveCategoriaId = filters.categoriaId || '';
+        if (effectiveCategoriaId && !availableCategorias.some((category) => String(category.id) === effectiveCategoriaId)) {
+          effectiveCategoriaId = '';
+          setFilters((previous) => {
+            if (!previous.categoriaId) return previous;
+            return {
+              ...previous,
+              categoriaId: '',
+            };
+          });
+        }
+
+        const phaseSet = new Set<string>();
+        const phaseScopedCompetitions = allCompetitions.filter((competition) => {
+          if (effectiveCategoriaId && String(competition.categoria_id) !== effectiveCategoriaId) return false;
+          if (filters.competicionNombre && normalizeText(competition.nombre) !== normalizeText(filters.competicionNombre)) return false;
+          return true;
+        });
+        for (const competition of phaseScopedCompetitions) {
+          const phase = inferCompetitionPhase(competition.nombre || '');
+          if (phase !== 'Sin fase') phaseSet.add(phase);
+        }
+        const phaseOptions = Array.from(phaseSet).sort((a, b) => a.localeCompare(b));
+        setFasesDisponibles(phaseOptions);
+
+        let effectivePhase = filters.fase || '';
+        if (effectivePhase && !phaseOptions.includes(effectivePhase)) {
+          effectivePhase = '';
+          setFilters((previous) => {
+            if (!previous.fase && !previous.competicionNombre && !previous.equipoNombre) return previous;
+            return {
+              ...previous,
+              fase: '',
+              competicionNombre: '',
+              equipoNombre: '',
+            };
+          });
+        }
+
+        const scopedCompetitions = allCompetitions.filter((competition) => {
+          if (effectiveCategoriaId && String(competition.categoria_id) !== effectiveCategoriaId) return false;
+          if (effectivePhase && inferCompetitionPhase(competition.nombre || '') !== effectivePhase) return false;
+          return true;
         });
 
         const dedupeByName = new Map<string, { nombre: string }>();
-        for (const competition of results) {
+        for (const competition of scopedCompetitions) {
           const normalized = normalizeText(competition.nombre);
           if (!dedupeByName.has(normalized)) {
             dedupeByName.set(normalized, { nombre: competition.nombre });
           }
         }
 
-        const options = Array.from(dedupeByName.values()).sort((a, b) => a.nombre.localeCompare(b.nombre));
-        setCompeticiones(options);
+        const competitionOptions = Array.from(dedupeByName.values()).sort((a, b) => a.nombre.localeCompare(b.nombre));
+        setCompeticiones(competitionOptions);
 
-        if (filters.competicionNombre && !options.some((option) => option.nombre === filters.competicionNombre)) {
-          setFilters((previous) => ({ ...previous, competicionNombre: '' }));
+        let effectiveCompetition = filters.competicionNombre || '';
+        if (effectiveCompetition && !competitionOptions.some((option) => option.nombre === effectiveCompetition)) {
+          effectiveCompetition = '';
+          setFilters((previous) => {
+            if (!previous.competicionNombre && !previous.equipoNombre) return previous;
+            return {
+              ...previous,
+              competicionNombre: '',
+              equipoNombre: '',
+            };
+          });
+        }
+
+        const teamOptions = await fetchEquiposByFilters({
+          temporadaId: filters.temporadaId,
+          categoriaId: effectiveCategoriaId || undefined,
+          fase: effectivePhase || undefined,
+          competicionNombre: effectiveCompetition || undefined,
+        });
+
+        if (isCancelled) return;
+
+        setEquipos(teamOptions);
+        if (filters.equipoNombre && !teamOptions.some((team) => team.nombre === filters.equipoNombre)) {
+          setFilters((previous) => {
+            if (!previous.equipoNombre) return previous;
+            return {
+              ...previous,
+              equipoNombre: '',
+            };
+          });
         }
       } catch (error) {
         console.error(error);
       }
     };
 
-    loadCompetitions();
-  }, [filters.temporadaId, filters.categoriaId, filters.fase, filters.competicionNombre]);
+    loadAdvancedOptions();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [categorias, filters.temporadaId, filters.categoriaId, filters.fase, filters.competicionNombre, filters.equipoNombre]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -162,7 +259,7 @@ const TeamsPage: React.FC = () => {
     setTeams([]);
     setExpandedClubId(null);
     setExpandedSeasonKey(null);
-  }, [filtersKey, favoriteIds, isReady]);
+  }, [filtersKey, favoriteIds, onlyFavorites, isReady]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -187,7 +284,13 @@ const TeamsPage: React.FC = () => {
           filters.clubNombre
         );
 
-        let queryFilters: GlobalTeamFilters | null = null;
+          let queryFilters: GlobalTeamFilters | null = null;
+
+          if (onlyFavorites && favoriteIds.length === 0) {
+            setTeams([]);
+            setHasMore(false);
+            return;
+          }
 
         if (!hasAnyFilter) {
           if (favoriteIds.length > 0) {
@@ -203,13 +306,20 @@ const TeamsPage: React.FC = () => {
               offset: page * PAGE_SIZE,
             };
           }
-        } else {
+          } else {
           queryFilters = {
             ...filters,
             limit: PAGE_SIZE,
             offset: page * PAGE_SIZE,
           };
         }
+
+          if (queryFilters && onlyFavorites && favoriteIds.length > 0) {
+            queryFilters = {
+              ...queryFilters,
+              clubIds: favoriteIds,
+            };
+          }
 
         if (!queryFilters) {
           setTeams([]);
@@ -245,7 +355,7 @@ const TeamsPage: React.FC = () => {
     };
 
     loadPage();
-  }, [defaultSeasonId, favoriteIds, filters, isReady, page]);
+  }, [defaultSeasonId, favoriteIds, filters, isReady, onlyFavorites, page]);
 
   useEffect(() => {
     if (!sentinelRef.current) return;
@@ -427,7 +537,7 @@ const TeamsPage: React.FC = () => {
                 className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
               >
                 <option value="">Todas</option>
-                {categorias.map((category) => (
+                  {categoriasDisponibles.map((category) => (
                   <option key={category.id} value={category.id}>{category.nombre}</option>
                 ))}
               </select>
@@ -441,9 +551,9 @@ const TeamsPage: React.FC = () => {
                 className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"
               >
                 <option value="">Todas</option>
-                <option value="Primera Fase">Primera Fase</option>
-                <option value="Segona Fase">Segona Fase</option>
-                <option value="Tercera Fase">Tercera Fase</option>
+                  {fasesDisponibles.map((fase) => (
+                    <option key={fase} value={fase}>{fase}</option>
+                  ))}
               </select>
             </div>
 
