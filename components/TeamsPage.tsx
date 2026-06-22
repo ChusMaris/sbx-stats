@@ -380,6 +380,12 @@ const TeamsPage: React.FC = () => {
 
   const sortedTeams = useMemo(() => {
     const getCellValue = (team: GlobalTeamRow, key: SortKey) => {
+      if (key === 'puntosFavor') {
+        return team.partidosJugados > 0 ? team.puntosFavor / team.partidosJugados : 0;
+      }
+      if (key === 'puntosContra') {
+        return team.partidosJugados > 0 ? team.puntosContra / team.partidosJugados : 0;
+      }
       const value = team[key];
       if (typeof value === 'number') return value;
       return String(value || '').toLowerCase();
@@ -431,10 +437,10 @@ const TeamsPage: React.FC = () => {
     }));
   };
 
-  const renderSortHeader = (label: string, key: SortKey, align: 'left' | 'center' = 'center') => (
+  const renderSortHeader = (label: string, key: SortKey, align: 'left' | 'center' = 'center', className = '') => (
     <th
       onClick={() => handleSort(key)}
-      className={`px-3 py-2 cursor-pointer select-none text-[10px] font-bold uppercase tracking-wide text-slate-400 ${align === 'center' ? 'text-center' : 'text-left'}`}
+      className={`px-3 py-2 cursor-pointer select-none text-[10px] font-bold uppercase tracking-wide text-slate-400 ${align === 'center' ? 'text-center' : 'text-left'} ${className}`}
     >
       <div className={`inline-flex items-center gap-1 ${align === 'center' ? 'justify-center' : 'justify-start'}`}>
         <span className={sortConfig.key === key ? 'text-fcbq-blue' : ''}>{label}</span>
@@ -455,20 +461,25 @@ const TeamsPage: React.FC = () => {
     totalTiros2Anotados: number;
     totalTiros3Anotados: number;
     totalFaltas: number;
-  }, textSize = 'text-sm') => (
-    <>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.partidosJugados}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-emerald-600 font-bold`}>{item.partidosGanados}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-rose-600 font-bold`}>{item.partidosPerdidos}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} font-bold text-fcbq-blue bg-fcbq-blue/5`}>{item.puntosFavor}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600`}>{item.puntosContra}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTirosLibresAnotados}/{item.totalTirosLibresIntentados}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.t1Pct.toFixed(1)}%</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTiros2Anotados}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTiros3Anotados}</td>
-      <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalFaltas}</td>
-    </>
-  );
+  }, textSize = 'text-sm') => {
+    const pfAvg = item.partidosJugados > 0 ? (item.puntosFavor / item.partidosJugados).toFixed(1) : '0.0';
+    const pcAvg = item.partidosJugados > 0 ? (item.puntosContra / item.partidosJugados).toFixed(1) : '0.0';
+
+    return (
+      <>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.partidosJugados}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-emerald-600 font-bold`}>{item.partidosGanados}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-rose-600 font-bold`}>{item.partidosPerdidos}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} font-bold text-fcbq-blue bg-fcbq-blue/5`}>{pfAvg}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600`}>{pcAvg}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTirosLibresAnotados}/{item.totalTirosLibresIntentados}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.t1Pct.toFixed(1)}%</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTiros2Anotados}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalTiros3Anotados}</td>
+        <td className={`px-3 py-2.5 text-center ${textSize} text-slate-600 font-medium`}>{item.totalFaltas}</td>
+      </>
+    );
+  };
 
   return (
     <div className="animate-fade-in space-y-5 md:space-y-6">
@@ -650,25 +661,25 @@ const TeamsPage: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-thin">
               <table className="w-full min-w-[1120px]">
                 <thead className="border-b border-slate-100 bg-white sticky top-0 z-10">
-                  <tr>
-                    <th className="px-3 py-2 text-center text-[10px] uppercase font-bold tracking-wide text-slate-400">Fav</th>
-                    {renderSortHeader('Equipo', 'nombre', 'left')}
-                    {renderSortHeader('PJ', 'partidosJugados')}
-                    {renderSortHeader('PG', 'partidosGanados')}
-                    {renderSortHeader('PP', 'partidosPerdidos')}
-                    {renderSortHeader('PF', 'puntosFavor')}
-                    {renderSortHeader('PC', 'puntosContra')}
-                    {renderSortHeader('T1(A/I)', 'totalTirosLibresAnotados')}
-                    {renderSortHeader('%T1', 't1Pct')}
-                    {renderSortHeader('T2', 'totalTiros2Anotados')}
-                    {renderSortHeader('T3', 'totalTiros3Anotados')}
-                    {renderSortHeader('Faltas', 'totalFaltas')}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
+                   <tr>
+                     <th className="px-3 py-2 text-center text-[10px] uppercase font-bold tracking-wide text-slate-400">Fav</th>
+                     {renderSortHeader('Equipo', 'nombre', 'left')}
+                     {renderSortHeader('PJ', 'partidosJugados')}
+                     {renderSortHeader('PG', 'partidosGanados')}
+                     {renderSortHeader('PP', 'partidosPerdidos')}
+                     {renderSortHeader('MPF', 'puntosFavor', 'center')}
+                     {renderSortHeader('MPC', 'puntosContra', 'center')}
+                     {renderSortHeader('T1(A/I)', 'totalTirosLibresAnotados', 'center')}
+                     {renderSortHeader('%T1', 't1Pct', 'center')}
+                     {renderSortHeader('T2', 'totalTiros2Anotados', 'center')}
+                     {renderSortHeader('T3', 'totalTiros3Anotados', 'center')}
+                     {renderSortHeader('Faltas', 'totalFaltas', 'center')}
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-slate-100">
                   {visibleTeams.map((team) => {
                     const isFavorite = favoriteIds.includes(String(team.clubId));
                     const isExpanded = expandedClubId === String(team.clubId);

@@ -14,7 +14,10 @@
     "deploy:fix": "gh-pages-clean && npm run deploy"
   },
   "dependencies": {
+    "@google/genai": "^2.9.0",
     "@supabase/supabase-js": "2.39.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "lucide-react": "0.563.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -22,6 +25,7 @@
     "recharts": "3.0.0-alpha.9"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^22.14.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

@@ -9,7 +9,7 @@ import ScoutingView from './components/ScoutingView';
 import LandingPage from './components/LandingPage';
 import PlayersPage from './components/PlayersPage';
 import TeamsPage from './components/TeamsPage';
-import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users } from 'lucide-react';
+import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users, Home } from 'lucide-react';
 import { getActiveCompetition, getRecentCompetitions, setActiveCompetition, upsertRecentCompetition } from './utils/competitionStorage';
 
 type ViewDataState = {
@@ -368,63 +368,142 @@ const AppContent: React.FC = () => {
   const activeCompetitionName = viewData?.competicion?.nombre || competiciones.find(c => c.id.toString() === selectedCompeticion)?.nombre;
 
   const renderTopHeader = (sticky: boolean) => (
-    <header className={`bg-fcbq-blue text-white transition-all duration-300 ${sticky ? (isScrolled ? 'py-2 md:py-2' : 'py-2 md:py-4') : 'py-3 md:py-4'}`}>
-      <div className="container mx-auto px-4">
+    <header className={`bg-gradient-to-r from-fcbq-dark to-fcbq-blue text-white shadow-md transition-all duration-300 ${sticky ? (isScrolled ? 'py-1.5' : 'py-3 md:py-4') : 'py-3.5'}`}>
+      <div className="container mx-auto px-2 md:px-4">
         <div className="flex items-center justify-between">
           <div
-            className="flex items-center gap-2 md:gap-3 overflow-hidden cursor-pointer select-none active:opacity-80"
+            className="flex items-center gap-2 md:gap-3 overflow-hidden cursor-pointer select-none active:scale-95 transition-transform"
             onClick={handleSecretClick}
+            title={isAdmin ? "Modo Gestión Activo" : "Haz clic para Gestión"}
           >
             <div
-              className={`bg-white rounded-full flex items-center justify-center text-fcbq-blue font-bold border-2 transition-all duration-300 overflow-hidden ${isAdmin ? 'border-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]' : 'border-fcbq-accent'} ${sticky ? (isScrolled ? 'w-8 h-8 text-base md:w-8 md:h-8 md:text-base' : 'w-8 h-8 text-base md:w-10 md:h-10 md:text-xl') : 'w-9 h-9 text-lg md:w-10 md:h-10 md:text-xl'}`}
+              className={`bg-white rounded-full flex items-center justify-center text-fcbq-blue font-black border-2 transition-all duration-300 overflow-hidden ${isAdmin ? 'border-green-400 shadow-[0_0_12px_rgba(74,222,128,0.6)] animate-pulse' : 'border-fcbq-accent'} ${sticky ? (isScrolled ? 'w-8 h-8 text-sm' : 'w-10 h-10 text-lg') : 'w-10 h-10 text-lg'}`}
             >
-              <span className={sticky ? (isScrolled ? 'text-base md:text-base' : 'text-base md:text-xl') : 'text-lg md:text-xl'}>B</span>
+              <span>B</span>
             </div>
 
             <div className="flex flex-col justify-center">
-              <h1 className="text-base md:text-2xl font-bold tracking-tight animate-fade-in flex items-center gap-1.5 md:gap-2 leading-none">
+              <h1 className="text-base md:text-2xl font-black tracking-tight flex items-center gap-1.5 md:gap-2 leading-none uppercase">
                 Brafa Stats
-                {isAdmin && <Unlock size={14} className="text-green-400 opacity-70" />}
+                {isAdmin && <span className="flex h-2 w-2 rounded-full bg-green-400 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span></span>}
               </h1>
+              <span className="text-[8px] md:text-[10px] text-blue-200 uppercase tracking-widest leading-none mt-1">FCBQ Analytics</span>
             </div>
           </div>
 
-          <nav className="flex items-center gap-1 md:gap-2">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1.5">
+            <NavLink
+              to="/"
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+            >
+              <Home size={14} />
+              <span>Inicio</span>
+            </NavLink>
+
             <NavLink
               to="/stats"
-              className={({ isActive }) => `flex items-center gap-1 md:gap-2 px-2 py-1.5 md:px-3 md:py-2 rounded-md md:rounded-lg text-xs md:text-sm font-bold transition-all ${isActive ? 'bg-white text-fcbq-blue shadow-sm' : 'text-blue-100 hover:bg-white/10'}`}
+              onClick={(e) => {
+                if (!selectedCompeticion) {
+                  e.preventDefault();
+                  alert("Por favor, selecciona primero una competición.");
+                }
+              }}
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
             >
-              <BarChart3 size={16} />
-              <span className="hidden md:inline">Estadísticas</span>
+              <BarChart3 size={14} />
+              <span>Estadísticas</span>
             </NavLink>
 
             <NavLink
               to="/match-center"
-              className={({ isActive }) => `flex items-center gap-1 md:gap-2 px-2 py-1.5 md:px-3 md:py-2 rounded-md md:rounded-lg text-xs md:text-sm font-bold transition-all ${isActive ? 'bg-white text-fcbq-blue shadow-sm' : 'text-blue-100 hover:bg-white/10'}`}
+              onClick={(e) => {
+                if (!selectedCompeticion) {
+                  e.preventDefault();
+                  alert("Por favor, selecciona primero una competición.");
+                }
+              }}
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
             >
-              <CalendarDays size={16} />
-              <span className="hidden md:inline">Match Center</span>
+              <CalendarDays size={14} />
+              <span>Match Center</span>
             </NavLink>
 
             <NavLink
               to="/players"
-              className={({ isActive }) => `flex items-center gap-1 md:gap-2 px-2 py-1.5 md:px-3 md:py-2 rounded-md md:rounded-lg text-xs md:text-sm font-bold transition-all ${isActive ? 'bg-white text-fcbq-blue shadow-sm' : 'text-blue-100 hover:bg-white/10'}`}
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
             >
-              <Users size={16} />
-              <span className="hidden md:inline">Jugadores</span>
+              <Users size={14} />
+              <span>Jugadores</span>
             </NavLink>
 
             <NavLink
               to="/teams"
-              className={({ isActive }) => `flex items-center gap-1 md:gap-2 px-2 py-1.5 md:px-3 md:py-2 rounded-md md:rounded-lg text-xs md:text-sm font-bold transition-all ${isActive ? 'bg-white text-fcbq-blue shadow-sm' : 'text-blue-100 hover:bg-white/10'}`}
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
             >
-              <Shield size={16} />
-              <span className="hidden md:inline">Equipos</span>
+              <Shield size={14} />
+              <span>Equipos</span>
             </NavLink>
           </nav>
         </div>
       </div>
     </header>
+  );
+
+  const renderBottomNav = () => (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 px-1 py-1.5 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.06)] pb-safe">
+      <NavLink
+        to="/"
+        className={({ isActive }) => `flex flex-col items-center gap-0.5 py-0.5 text-center flex-1 transition-all ${isActive ? 'text-fcbq-blue font-black' : 'text-slate-400 font-bold'}`}
+      >
+        <Home size={18} className="stroke-[2.5]" />
+        <span className="text-[9px] tracking-tight uppercase">Inicio</span>
+      </NavLink>
+
+      <button
+        onClick={() => {
+          if (!selectedCompeticion) {
+            alert("Selecciona primero una competición en la página de inicio.");
+          } else {
+            navigate('/stats');
+          }
+        }}
+        className={`flex flex-col items-center gap-0.5 py-0.5 text-center flex-1 transition-all ${!selectedCompeticion ? 'opacity-30 cursor-not-allowed text-slate-400 font-bold' : location.pathname === '/stats' ? 'text-fcbq-blue font-black' : 'text-slate-400 font-bold'}`}
+      >
+        <BarChart3 size={18} className="stroke-[2.5]" />
+        <span className="text-[9px] tracking-tight uppercase">Stats</span>
+      </button>
+
+      <button
+        onClick={() => {
+          if (!selectedCompeticion) {
+            alert("Selecciona primero una competición en la página de inicio.");
+          } else {
+            navigate('/match-center');
+          }
+        }}
+        className={`flex flex-col items-center gap-0.5 py-0.5 text-center flex-1 transition-all ${!selectedCompeticion ? 'opacity-30 cursor-not-allowed text-slate-400 font-bold' : location.pathname === '/match-center' ? 'text-fcbq-blue font-black' : 'text-slate-400 font-bold'}`}
+      >
+        <CalendarDays size={18} className="stroke-[2.5]" />
+        <span className="text-[9px] tracking-tight uppercase">Partidos</span>
+      </button>
+
+      <NavLink
+        to="/players"
+        className={({ isActive }) => `flex flex-col items-center gap-0.5 py-0.5 text-center flex-1 transition-all ${isActive ? 'text-fcbq-blue font-black' : 'text-slate-400 font-bold'}`}
+      >
+        <Users size={18} className="stroke-[2.5]" />
+        <span className="text-[9px] tracking-tight uppercase">Jugadores</span>
+      </NavLink>
+
+      <NavLink
+        to="/teams"
+        className={({ isActive }) => `flex flex-col items-center gap-0.5 py-0.5 text-center flex-1 transition-all ${isActive ? 'text-fcbq-blue font-black' : 'text-slate-400 font-bold'}`}
+      >
+        <Shield size={18} className="stroke-[2.5]" />
+        <span className="text-[9px] tracking-tight uppercase">Equipos</span>
+      </NavLink>
+    </nav>
   );
 
   const renderDataRoute = (route: 'stats' | 'match-center') => {
@@ -505,7 +584,7 @@ const AppContent: React.FC = () => {
         renderTopHeader(false)
       )}
 
-      <main className={`flex-grow container mx-auto px-4 ${isLandingRoute ? 'py-6 md:py-8' : 'py-8'} relative z-10`}>
+      <main className={`flex-grow container mx-auto px-2 md:px-4 ${isLandingRoute ? 'py-6 md:py-8' : 'py-8'} pb-24 md:pb-8 relative z-10`}>
         {errorMsg && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r shadow-sm flex items-start gap-3">
              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={24} />
@@ -546,7 +625,7 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      <footer className="bg-slate-900 text-slate-400 py-10 text-center text-base">
+      <footer className="bg-slate-900 text-slate-400 py-10 text-center text-base pb-24 md:pb-10">
         <p>&copy; {new Date().getFullYear()} Brafa Stats. Datos no oficiales para uso analítico.</p>
         <p className="text-[10px] text-slate-700 mt-2">
             {isAdmin 
@@ -554,6 +633,7 @@ const AppContent: React.FC = () => {
                 : "Haz clic 5 veces en el logo para gestión."}
         </p>
       </footer>
+      {renderBottomNav()}
     </div>
   );
 };

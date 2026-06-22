@@ -431,10 +431,10 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
     }));
   };
 
-  const renderSortHeader = (label: string, key: SortKey, align: 'left' | 'center' = 'center') => (
+  const renderSortHeader = (label: string, key: SortKey, align: 'left' | 'center' = 'center', className = '') => (
     <th
       onClick={() => handleSort(key)}
-      className={`px-3 py-2 cursor-pointer select-none text-[10px] font-bold uppercase tracking-wide text-slate-400 ${align === 'center' ? 'text-center' : 'text-left'}`}
+      className={`px-3 py-2 cursor-pointer select-none text-[10px] font-bold uppercase tracking-wide text-slate-400 ${align === 'center' ? 'text-center' : 'text-left'} ${className}`}
     >
       <div className={`inline-flex items-center gap-1 ${align === 'center' ? 'justify-center' : 'justify-start'}`}>
         <span className={sortConfig.key === key ? 'text-fcbq-blue' : ''}>{label}</span>
@@ -633,8 +633,8 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[860px]">
+            <div className="overflow-x-auto scrollbar-thin">
+              <table className="w-full min-w-[850px]">
                 <thead className="border-b border-slate-100 bg-white sticky top-0 z-10">
                   <tr>
                     <th className="px-3 py-2 text-center text-[10px] uppercase font-bold tracking-wide text-slate-400">Fav</th>
@@ -642,12 +642,12 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                     {renderSortHeader('Jugador', 'nombre', 'left')}
                     {renderSortHeader('PJ', 'partidosJugados')}
                     {renderSortHeader('PPG', 'ppg')}
-                    {renderSortHeader('MPG', 'mpg')}
-                    {renderSortHeader('PPM', 'ppm')}
-                    {renderSortHeader('FPG', 'fpg')}
-                    {renderSortHeader('%T1', 't1Pct')}
-                    {renderSortHeader('T2/g', 't2Made')}
-                    {renderSortHeader('T3/g', 't3Made')}
+                    {renderSortHeader('MPG', 'mpg', 'center')}
+                    {renderSortHeader('PPM', 'ppm', 'center')}
+                    {renderSortHeader('FPG', 'fpg', 'center')}
+                    {renderSortHeader('%T1', 't1Pct', 'center')}
+                    {renderSortHeader('T2/g', 't2Made', 'center')}
+                    {renderSortHeader('T3/g', 't3Made', 'center')}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

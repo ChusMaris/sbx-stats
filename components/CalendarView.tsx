@@ -210,57 +210,67 @@ const CalendarView: React.FC<CalendarViewProps> = ({ matches, competicionId, equ
                               </span>
                            </div>
 
-                           {/* Teams & Score */}
-                           <div className="flex-1 flex items-center justify-center gap-4 md:gap-8 w-full">
-                              {/* Local */}
-                              <div className="flex-1 flex flex-col items-center text-center gap-2">
-                                 <div className="w-10 h-10 md:w-12 md:h-12 relative">
-                                    <img src={match.equipo_local?.clubs?.logo_url || ''} className={`w-full h-full object-contain ${isPlayed ? 'opacity-70 grayscale-[0.5]' : ''}`} alt="Local" />
-                                    {/* SCOUTING LOCAL: Only if NOT played */}
-                                    {!isPlayed && (
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); handleAnalyze(match.id + '_local', match.equipo_local_id, match.equipo_visitante_id); }}
-                                            className="absolute -top-2 -right-2 bg-white text-fcbq-blue p-1 rounded-full shadow border hover:bg-blue-50 transition-transform hover:scale-110"
-                                            title="Analizar Local"
-                                        >
-                                            <BrainCircuit size={12} />
-                                        </button>
-                                    )}
-                                 </div>
-                                 <span className={`text-xs md:text-sm font-bold leading-tight ${isPlayed ? 'text-slate-500' : 'text-slate-800'}`}>{match.equipo_local?.nombre_especifico}</span>
-                              </div>
+                            {/* Teams & Score */}
+                            <div className="flex-1 flex items-center justify-between gap-3 md:gap-6 w-full min-w-0">
+                               {/* Local */}
+                               <div className="flex-1 flex flex-col items-center text-center gap-2 min-w-0">
+                                  <div className="w-10 h-10 md:w-12 md:h-12 relative shrink-0">
+                                     <img src={match.equipo_local?.clubs?.logo_url || ''} className={`w-full h-full object-contain ${isPlayed ? 'opacity-75 grayscale-[0.2]' : ''}`} alt="Local" />
+                                     {/* SCOUTING LOCAL: Only if NOT played */}
+                                     {!isPlayed && (
+                                         <button 
+                                             onClick={(e) => { e.stopPropagation(); handleAnalyze(match.id + '_local', match.equipo_local_id, match.equipo_visitante_id); }}
+                                             className="absolute -top-1.5 -right-1.5 bg-white text-fcbq-blue p-1 rounded-full shadow-md border border-slate-100 hover:bg-blue-50 transition-transform hover:scale-110"
+                                             title="Analizar Local"
+                                         >
+                                             <BrainCircuit size={11} />
+                                         </button>
+                                     )}
+                                  </div>
+                                  <span className={`text-xs md:text-sm font-bold leading-tight truncate w-full px-1 ${isPlayed ? 'text-slate-500 font-medium' : 'text-slate-800'}`} title={match.equipo_local?.nombre_especifico}>
+                                    {match.equipo_local?.nombre_especifico}
+                                  </span>
+                               </div>
 
-                              {/* VS or SCORE */}
-                              <div className="text-xl md:text-3xl font-black text-slate-800 shrink-0">
-                                {isPlayed ? (
-                                    <div className="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
-                                        <span className="text-slate-600">{match.puntos_local}</span>
-                                        <span className="text-slate-300 text-base">-</span>
-                                        <span className="text-slate-600">{match.puntos_visitante}</span>
-                                    </div>
-                                ) : (
-                                    <span className="text-slate-300 text-2xl">VS</span>
-                                )}
-                              </div>
+                               {/* VS or SCORE */}
+                               <div className="shrink-0 flex flex-col items-center justify-center">
+                                 {isPlayed ? (
+                                     <div className="flex items-center gap-3 bg-slate-50/80 px-4 py-1.5 rounded-xl border border-slate-100 shadow-inner">
+                                         <span className={`text-base md:text-lg font-black tracking-tight ${match.puntos_local! > match.puntos_visitante! ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                            {match.puntos_local}
+                                         </span>
+                                         <span className="text-slate-300 font-medium text-xs">-</span>
+                                         <span className={`text-base md:text-lg font-black tracking-tight ${match.puntos_visitante! > match.puntos_local! ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                            {match.puntos_visitante}
+                                         </span>
+                                     </div>
+                                 ) : (
+                                     <div className="flex items-center justify-center bg-blue-50/50 px-3 py-1 rounded-lg border border-blue-100/50 text-fcbq-blue text-[11px] font-extrabold tracking-wider">
+                                         VS
+                                     </div>
+                                 )}
+                               </div>
 
-                              {/* Visitor */}
-                              <div className="flex-1 flex flex-col items-center text-center gap-2">
-                                 <div className="w-10 h-10 md:w-12 md:h-12 relative">
-                                    <img src={match.equipo_visitante?.clubs?.logo_url || ''} className={`w-full h-full object-contain ${isPlayed ? 'opacity-70 grayscale-[0.5]' : ''}`} alt="Visitante" />
-                                    {/* SCOUTING VISITOR: Only if NOT played */}
-                                    {!isPlayed && (
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); handleAnalyze(match.id + '_visitor', match.equipo_visitante_id, match.equipo_local_id); }}
-                                            className="absolute -top-2 -right-2 bg-white text-red-500 p-1 rounded-full shadow border hover:bg-red-50 transition-transform hover:scale-110"
-                                            title="Analizar Visitante"
-                                        >
-                                            <BrainCircuit size={12} />
-                                        </button>
-                                    )}
-                                 </div>
-                                 <span className={`text-xs md:text-sm font-bold leading-tight ${isPlayed ? 'text-slate-500' : 'text-slate-800'}`}>{match.equipo_visitante?.nombre_especifico}</span>
-                              </div>
-                           </div>
+                               {/* Visitor */}
+                               <div className="flex-1 flex flex-col items-center text-center gap-2 min-w-0">
+                                  <div className="w-10 h-10 md:w-12 md:h-12 relative shrink-0">
+                                     <img src={match.equipo_visitante?.clubs?.logo_url || ''} className={`w-full h-full object-contain ${isPlayed ? 'opacity-75 grayscale-[0.2]' : ''}`} alt="Visitante" />
+                                     {/* SCOUTING VISITOR: Only if NOT played */}
+                                     {!isPlayed && (
+                                         <button 
+                                             onClick={(e) => { e.stopPropagation(); handleAnalyze(match.id + '_visitor', match.equipo_visitante_id, match.equipo_local_id); }}
+                                             className="absolute -top-1.5 -right-1.5 bg-white text-red-500 p-1 rounded-full shadow-md border border-slate-100 hover:bg-red-50 transition-transform hover:scale-110"
+                                             title="Analizar Visitante"
+                                         >
+                                             <BrainCircuit size={11} />
+                                         </button>
+                                     )}
+                                  </div>
+                                  <span className={`text-xs md:text-sm font-bold leading-tight truncate w-full px-1 ${isPlayed ? 'text-slate-500 font-medium' : 'text-slate-800'}`} title={match.equipo_visitante?.nombre_especifico}>
+                                    {match.equipo_visitante?.nombre_especifico}
+                                  </span>
+                               </div>
+                            </div>
                         </div>
 
                         {/* Analysis Reports Area (Only visible for non-played) */}

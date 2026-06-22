@@ -324,8 +324,8 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
     </div>
   );
 
-  const TableHeader = ({ label, column, align = 'center' }: { label: string, column: keyof PlayerAggregatedStats | 't1Pct', align?: 'left' | 'center' }) => (
-    <th className={`px-2 md:px-4 py-2 md:py-3 cursor-pointer hover:bg-gray-50 transition-colors group ${align === 'center' ? 'text-center' : 'text-left'}`} onClick={() => handleSort(column)}>
+  const TableHeader = ({ label, column, align = 'center', className = '' }: { label: string, column: keyof PlayerAggregatedStats | 't1Pct', align?: 'left' | 'center', className?: string }) => (
+    <th className={`px-2 md:px-4 py-2 md:py-3 cursor-pointer hover:bg-gray-50 transition-colors group ${align === 'center' ? 'text-center' : 'text-left'} ${className}`} onClick={() => handleSort(column)}>
       <div className={`flex items-center ${align === 'center' ? 'justify-center' : 'justify-start'}`}>
         <span className={`${sortConfig.key === column ? 'text-fcbq-blue' : 'text-gray-400'} group-hover:text-gray-600`}>{label}</span>
         {sortConfig.key === column ? (sortConfig.direction === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />) : <ArrowUpDown size={12} className="opacity-20" />}
@@ -372,16 +372,16 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                 {teamMatches.length === 0 ? (
                   <p className="text-gray-500 text-center py-10 italic text-lg">No hay registros de partidos.</p>
                 ) : (
-                  <table className="w-full text-sm md:text-base text-left">
+                  <table className="w-full min-w-[620px] sm:min-w-[760px] text-sm md:text-base text-left table-fixed">
                     <thead className="text-[10px] text-gray-400 font-bold uppercase border-b bg-transparent sticky top-0 bg-white z-10">
                       <tr>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-left">Partido</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">Resultado</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">T1 (A/I)</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">%T1</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">T2</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">T3</th>
-                        <th className="px-2 md:px-4 py-2 md:py-3 text-center">Faltas</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left w-[200px]">Partido</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[125px] sm:w-[160px]">Resultado</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[75px] sm:w-[85px]">T1 (A/I)</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[55px] sm:w-[70px]">%T1</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[50px] sm:w-[60px]">T2</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[50px] sm:w-[60px]">T3</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-center w-[65px] sm:w-[75px]">Faltas</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -397,21 +397,21 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                           <React.Fragment key={match.id}>
                             <tr className={`hover:bg-blue-50/50 cursor-pointer transition group text-[11px] md:text-sm ${isExpanded ? 'bg-blue-50/40' : ''}`} onClick={() => toggleMatchExpansion(match.id)}>
                               <td className="px-2 md:px-4 py-2.5 md:py-4 text-[11px] md:text-sm">
-                                <div className="flex flex-col gap-1 min-w-[260px]">
+                                <div className="flex flex-col gap-1 min-w-0 w-full">
                                   <div className="flex items-center gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-400">
                                     <span>Jornada {match.jornada || '-'}</span>
                                     <span>•</span>
                                     <span>{formatDate(match.fecha_hora)}</span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className={`font-bold text-[11px] md:text-sm uppercase tracking-tight truncate max-w-[110px] ${match.local.isMyTeam ? 'text-fcbq-blue' : 'text-slate-600'}`}>{match.local.name}</span>
-                                    <span className="font-black text-slate-400">vs</span>
-                                    <span className={`font-bold text-[11px] md:text-sm uppercase tracking-tight truncate max-w-[110px] ${match.visitor.isMyTeam ? 'text-fcbq-blue' : 'text-slate-600'}`}>{match.visitor.name}</span>
+                                  <div className="flex items-center gap-2 min-w-0 w-full">
+                                    <span className={`font-bold text-[11px] md:text-sm uppercase tracking-tight truncate flex-1 ${match.local.isMyTeam ? 'text-fcbq-blue font-extrabold' : 'text-slate-600'}`} title={match.local.name}>{match.local.name}</span>
+                                    <span className="font-extrabold text-slate-350 text-xs text-center shrink-0">vs</span>
+                                    <span className={`font-bold text-[11px] md:text-sm uppercase tracking-tight truncate flex-1 text-left ${match.visitor.isMyTeam ? 'text-fcbq-blue font-extrabold' : 'text-slate-600'}`} title={match.visitor.name}>{match.visitor.name}</span>
                                   </div>
                                 </div>
                               </td>
                               <td className="px-2 md:px-4 py-2.5 md:py-4 text-center text-[11px] md:text-sm">
-                                <div className="flex items-center justify-center gap-2 min-w-[96px]">
+                                <div className="flex items-center justify-center gap-1.5 min-w-[76px] max-w-full">
                                   <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                                     {match.local.logo ? (
                                       <img src={match.local.logo} alt={match.local.name} className="w-full h-full object-contain" />
@@ -419,12 +419,18 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                                       <div className="w-full h-full flex items-center justify-center text-[8px] font-bold text-slate-400">L</div>
                                     )}
                                   </div>
-                                  <span
+                                  <div
                                     aria-label={`Resultado: ${match.local.score}-${match.visitor.score}`}
-                                    className="inline-flex items-center justify-center min-w-[40px] px-1.5 py-0.5 rounded-md text-[10px] font-bold border bg-slate-100 text-slate-700 border-slate-200"
+                                    className="inline-flex items-center justify-center min-w-[54px] gap-1 px-2 py-1 rounded-lg text-xs font-extrabold border bg-slate-50 border-slate-200/80 shadow-sm"
                                   >
-                                    {match.local.score}-{match.visitor.score}
-                                  </span>
+                                    <span className={match.local.score > match.visitor.score ? 'text-emerald-600 font-black' : 'text-slate-500'}>
+                                      {match.local.score}
+                                    </span>
+                                    <span className="text-slate-300 font-medium">-</span>
+                                    <span className={match.visitor.score > match.local.score ? 'text-emerald-600 font-black' : 'text-slate-500'}>
+                                      {match.visitor.score}
+                                    </span>
+                                  </div>
                                   <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                                     {match.visitor.logo ? (
                                       <img src={match.visitor.logo} alt={match.visitor.name} className="w-full h-full object-contain" />
@@ -455,7 +461,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                                       <div className="px-4 py-5 text-sm text-slate-400 italic">Sin estadísticas individuales para este partido.</div>
                                     ) : (
                                       <div className="overflow-x-auto">
-                                        <table className="w-full text-[11px] md:text-sm">
+                                        <table className="w-full min-w-[500px] text-[11px] md:text-sm">
                                           <thead className="bg-white text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-100">
                                             <tr>
                                               <th className="px-2 md:px-4 py-1.5 md:py-2 text-center">#</th>
@@ -524,28 +530,28 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                              <span className="bg-slate-200 text-slate-600 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Jornada {match.jornada}</span>
                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{formatDate(match.fecha_hora)}</span>
                         </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex flex-col items-center w-1/3">
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex flex-col items-center w-1/3 min-w-0">
                                 <div className={`w-12 h-12 p-1 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center transition-transform group-hover:scale-105 overflow-hidden ${match.local.isMyTeam ? 'ring-2 ring-fcbq-blue/30 border-fcbq-blue/20' : ''}`}>
                                     {match.local.logo ? <img src={match.local.logo} alt="" className="w-full h-full object-contain rounded-full" /> : <span className="text-[9px] font-bold text-slate-300 uppercase">Logo</span>}
                                 </div>
-                                <span className={`text-[10px] mt-2 text-center font-black truncate w-full uppercase tracking-tighter ${match.local.isMyTeam ? 'text-fcbq-blue' : 'text-slate-500'}`}>{match.local.name}</span>
+                                <span className={`text-[11px] mt-2 text-center font-bold truncate w-full uppercase tracking-tight ${match.local.isMyTeam ? 'text-fcbq-blue font-extrabold' : 'text-slate-500'}`} title={match.local.name}>{match.local.name}</span>
                             </div>
-                            <div className="flex flex-col items-center w-1/3">
-                                <div className="flex items-center gap-1.5 text-2xl font-black text-slate-800 tracking-tight leading-none">
-                                    <span>{match.local.score}</span>
-                                    <span className="text-slate-300 text-xl">-</span>
-                                    <span>{match.visitor.score}</span>
+                            <div className="flex flex-col items-center w-1/3 shrink-0">
+                                <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-xl shadow-sm justify-center text-lg font-black text-slate-800 tracking-tight leading-none font-sans">
+                                    <span className={match.local.score > match.visitor.score ? 'text-emerald-600' : 'text-slate-500'}>{match.local.score}</span>
+                                    <span className="text-slate-300 font-medium text-xs">-</span>
+                                    <span className={match.visitor.score > match.local.score ? 'text-emerald-600' : 'text-slate-500'}>{match.visitor.score}</span>
                                 </div>
                                 <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border mt-2 tracking-tighter ${match.resultStatus === 'W' ? 'bg-green-100 text-green-700 border-green-200' : match.resultStatus === 'L' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                                     {match.resultStatus === 'W' ? 'VICTORIA' : (match.resultStatus === 'L' ? 'DERROTA' : 'EMPATE')}
                                 </span>
                             </div>
-                            <div className="flex flex-col items-center w-1/3">
+                            <div className="flex flex-col items-center w-1/3 min-w-0">
                                 <div className={`w-12 h-12 p-1 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center transition-transform group-hover:scale-105 overflow-hidden ${match.visitor.isMyTeam ? 'ring-2 ring-fcbq-blue/30 border-fcbq-blue/20' : ''}`}>
                                     {match.visitor.logo ? <img src={match.visitor.logo} alt="" className="w-full h-full object-contain rounded-full" /> : <span className="text-[9px] font-bold text-slate-300 uppercase">Logo</span>}
                                 </div>
-                                <span className={`text-[10px] mt-2 text-center font-black truncate w-full uppercase tracking-tighter ${match.visitor.isMyTeam ? 'text-fcbq-blue' : 'text-slate-500'}`}>{match.visitor.name}</span>
+                                <span className={`text-[11px] mt-2 text-center font-bold truncate w-full uppercase tracking-tight ${match.visitor.isMyTeam ? 'text-fcbq-blue font-extrabold' : 'text-slate-500'}`} title={match.visitor.name}>{match.visitor.name}</span>
                             </div>
                         </div>
                     </div>
@@ -609,8 +615,8 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
              </div>
 
              {playerViewMode === 'table' && (
-               <div className="-mx-4 md:mx-0 overflow-x-auto animate-fade-in">
-                    <table className="w-full text-sm md:text-base text-left">
+               <div className="-mx-4 md:mx-0 overflow-x-auto scrollbar-thin animate-fade-in">
+                    <table className="w-full text-sm md:text-base text-left min-w-[780px]">
                     <thead className="text-[10px] text-gray-400 font-bold uppercase border-b bg-transparent sticky top-0 bg-white z-10">
                         <tr>
                             <TableHeader label="#" column="dorsal" />
@@ -712,7 +718,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                                                 const scoreLabel = hasScore ? `${match?.puntos_local}-${match?.puntos_visitante}` : 'VS';
 
                                                 return (
-                                                  <div className="min-w-[180px]">
+                                                  <div className="min-w-[85px] md:min-w-[140px] max-w-full">
                                                     <div className="flex items-center gap-2">
                                                       <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                                                         {localLogo ? (
@@ -721,12 +727,26 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, sta
                                                           <div className="w-full h-full flex items-center justify-center text-[8px] font-bold text-slate-400">L</div>
                                                         )}
                                                       </div>
-                                                      <span
-                                                        aria-label={`Resultado: ${scoreLabel}`}
-                                                        className={`inline-flex items-center justify-center min-w-[40px] px-1.5 py-0.5 rounded-md text-[10px] font-bold border ${hasScore ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-slate-50 text-slate-500 border-slate-200'}`}
-                                                      >
-                                                        {scoreLabel}
-                                                      </span>
+                                                      {hasScore ? (
+                                                        <div
+                                                          aria-label={`Resultado: ${match?.puntos_local}-${match?.puntos_visitante}`}
+                                                          className="inline-flex items-center justify-center min-w-[54px] gap-1 px-2 py-1 rounded-lg text-xs font-extrabold border bg-slate-50 border-slate-200/80 shadow-sm"
+                                                        >
+                                                          <span className={match?.puntos_local! > match?.puntos_visitante! ? 'text-emerald-600 font-extrabold' : 'text-slate-500 font-bold'}>
+                                                            {match?.puntos_local}
+                                                          </span>
+                                                          <span className="text-slate-300 font-medium">-</span>
+                                                          <span className={match?.puntos_visitante! > match?.puntos_local! ? 'text-emerald-600 font-extrabold' : 'text-slate-500 font-bold'}>
+                                                            {match?.puntos_visitante}
+                                                          </span>
+                                                        </div>
+                                                      ) : (
+                                                        <span
+                                                          className="inline-flex items-center justify-center min-w-[48px] px-2 py-1 rounded-lg text-xs font-extrabold border bg-slate-50 text-slate-400 border-slate-100"
+                                                        >
+                                                          VS
+                                                        </span>
+                                                      )}
                                                       <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                                                         {visitorLogo ? (
                                                           <img src={visitorLogo} alt={visitorName} className="w-full h-full object-contain" />

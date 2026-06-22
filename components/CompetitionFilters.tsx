@@ -54,7 +54,7 @@ const CompetitionFilters: React.FC<CompetitionFiltersProps> = ({
             
             {/* --- MODO COLAPSADO (HEADER COMPACTO) --- */}
             {!isExpanded && selectedCompeticion && (
-                <div className="container mx-auto px-4 animate-fade-in">
+                <div className="container mx-auto px-2 md:px-4 animate-fade-in">
                     <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
                         {/* Contexto compacto en una sola línea */}
                         <div className="flex-1 min-w-0 flex items-center gap-1.5 md:gap-2 overflow-hidden">
@@ -84,7 +84,7 @@ const CompetitionFilters: React.FC<CompetitionFiltersProps> = ({
 
             {/* --- MODO EXPANDIDO (FORMULARIO) --- */}
             {isExpanded && (
-                <div className="container mx-auto px-4 animate-fade-in">
+                <div className="container mx-auto px-2 md:px-4 animate-fade-in">
                     
                     {/* Header del formulario (solo si ya hay algo seleccionado, para poder cerrar) */}
                     {selectedCompeticion && (
