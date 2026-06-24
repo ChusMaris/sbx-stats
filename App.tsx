@@ -9,7 +9,9 @@ import ScoutingView from './components/ScoutingView';
 import LandingPage from './components/LandingPage';
 import PlayersPage from './components/PlayersPage';
 import TeamsPage from './components/TeamsPage';
-import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users, Home } from 'lucide-react';
+import LoginLandingPage from './components/LoginLandingPage';
+import { supabase } from './supabaseClient';
+import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users, Home, User, LogOut } from 'lucide-react';
 import { getActiveCompetition, getRecentCompetitions, setActiveCompetition, upsertRecentCompetition } from './utils/competitionStorage';
 
 type ViewDataState = {
@@ -25,6 +27,150 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const initialSelection = useMemo(() => getInitialSelection(), []);
+
+  // --- Auth & Profile States ---
+  const [user, setUser] = useState<any>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 1. Check if the app runs inside a popup to process the OAuth code/token and notify the parent
+  useEffect(() => {
+    const isPopup = window.opener && window.opener !== window;
+    const hasHash = window.location.hash && (
+      window.location.hash.includes('access_token=') || 
+      window.location.hash.includes('error=')
+    );
+
+    if (isPopup && hasHash) {
+      console.log("OAuth popup callback detected, notifying opener...");
+      const timer = setTimeout(() => {
+        try {
+          window.opener.postMessage({ type: 'SUPABASE_AUTH_SUCCESS' }, window.location.origin);
+          window.close();
+        } catch (e) {
+          console.error("Failed to notify parent window:", e);
+          window.close();
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // 1b. Clean hash route from URL if it's an access token or error from Supabase in the main window
+  useEffect(() => {
+    const isMainAndHasAuth = (location.pathname.startsWith('/access_token=') || location.pathname.startsWith('/error=')) && !(window.opener && window.opener !== window);
+    if (isMainAndHasAuth) {
+      console.log("Main window: detected access token route, cleaning and redirecting to root...");
+      const timer = setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, navigate]);
+
+  // 2. Synchronize auth profile details with the public.usuarios table
+  const syncUserToDatabase = async (authUser: any) => {
+    if (!authUser) return;
+    try {
+      console.log("👥 Intentando registrar/sincronizar usuario en public.usuarios...");
+      
+      const { error } = await supabase
+        .from('usuarios')
+        .upsert({
+          id: authUser.id,
+          email: authUser.email,
+          nombre: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Usuario',
+          avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || '',
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error("❌ Error de registro/UPSERT de usuario en public.usuarios:", error);
+      } else {
+        console.log("✅ Registro de usuario completado con éxito en public.usuarios.");
+      }
+    } catch (err) {
+      console.error("❌ Excepción controlada al sincronizar usuario en tabla public.usuarios:", err);
+    }
+  };
+
+  // 3. Check current active session
+  const checkUserSession = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+        // Sync in background to prevent blocking authentication state and keep it non-blocking
+        syncUserToDatabase(session.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("Error checking session:", error);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  // 4. Initial session check & subscription for updates
+  useEffect(() => {
+    checkUserSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        // Sync in background to prevent blocking authentication state and keep it non-blocking
+        syncUserToDatabase(session.user);
+      } else {
+        setUser(null);
+      }
+      setCheckingAuth(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // 5. Parent message listener to reload user session
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'SUPABASE_AUTH_SUCCESS') {
+        console.log("Login success notified from popup.");
+        checkUserSession();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // 6. Register click outside listener for User Header dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // 7. Sign out helper
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setUser(null);
+      setIsDropdownOpen(false);
+      navigate('/');
+    } catch (err: any) {
+      alert("Error al cerrar sesión: " + (err.message || err));
+    }
+  };
 
   // --- Admin / Secret Mode Logic ---
   const [isAdmin, setIsAdmin] = useState<boolean>(() => {
@@ -391,60 +537,110 @@ const AppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1.5">
-            <NavLink
-              to="/"
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
-            >
-              <Home size={14} />
-              <span>Inicio</span>
-            </NavLink>
+          {/* Desktop Navigation & User Profile Dropdown Container */}
+          <div className="flex items-center gap-3 md:gap-4 shrink-0">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-1.5">
+              <NavLink
+                to="/"
+                className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+              >
+                <Home size={14} />
+                <span>Inicio</span>
+              </NavLink>
 
-            <NavLink
-              to="/stats"
-              onClick={(e) => {
-                if (!selectedCompeticion) {
-                  e.preventDefault();
-                  alert("Por favor, selecciona primero una competición.");
-                }
-              }}
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
-            >
-              <BarChart3 size={14} />
-              <span>Estadísticas</span>
-            </NavLink>
+              <NavLink
+                to="/stats"
+                onClick={(e) => {
+                  if (!selectedCompeticion) {
+                    e.preventDefault();
+                    alert("Por favor, selecciona primero una competición.");
+                  }
+                }}
+                className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+              >
+                <BarChart3 size={14} />
+                <span>Estadísticas</span>
+              </NavLink>
 
-            <NavLink
-              to="/match-center"
-              onClick={(e) => {
-                if (!selectedCompeticion) {
-                  e.preventDefault();
-                  alert("Por favor, selecciona primero una competición.");
-                }
-              }}
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
-            >
-              <CalendarDays size={14} />
-              <span>Match Center</span>
-            </NavLink>
+              <NavLink
+                to="/match-center"
+                onClick={(e) => {
+                  if (!selectedCompeticion) {
+                    e.preventDefault();
+                    alert("Por favor, selecciona primero una competición.");
+                  }
+                }}
+                className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+              >
+                <CalendarDays size={14} />
+                <span>Match Center</span>
+              </NavLink>
 
-            <NavLink
-              to="/players"
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
-            >
-              <Users size={14} />
-              <span>Jugadores</span>
-            </NavLink>
+              <NavLink
+                to="/players"
+                className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+              >
+                <Users size={14} />
+                <span>Jugadores</span>
+              </NavLink>
 
-            <NavLink
-              to="/teams"
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
-            >
-              <Shield size={14} />
-              <span>Equipos</span>
-            </NavLink>
-          </nav>
+              <NavLink
+                to="/teams"
+                className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white text-fcbq-blue shadow-sm font-black' : 'text-blue-100 hover:bg-white/10 hover:text-white'}`}
+              >
+                <Shield size={14} />
+                <span>Equipos</span>
+              </NavLink>
+            </nav>
+
+            {/* Profile Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-1 p-1 hover:bg-white/10 rounded-xl transition-all focus:outline-none cursor-pointer"
+                aria-label="Menú de usuario"
+              >
+                {user?.user_metadata?.avatar_url || user?.user_metadata?.picture ? (
+                  <img
+                    src={user.user_metadata.avatar_url || user.user_metadata.picture}
+                    alt="Avatar"
+                    referrerPolicy="no-referrer"
+                    className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover border-2 border-fcbq-accent shadow-sm"
+                  />
+                ) : (
+                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-fcbq-blue text-white flex items-center justify-center font-bold border-2 border-fcbq-accent shadow-sm text-xs md:text-sm">
+                    <User size={14} />
+                  </div>
+                )}
+              </button>
+
+              {isDropdownOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/80 py-2.5 z-50 text-slate-800 animate-fade-in origin-top-right text-left"
+                >
+                  <div className="px-4 py-2 border-b border-slate-100">
+                    <p className="font-extrabold text-sm text-slate-900 truncate">
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-semibold truncate mt-0.5">
+                      {user?.email}
+                    </p>
+                  </div>
+                  
+                  <div className="p-1.5">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-600 hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
+                    >
+                      <LogOut size={14} className="stroke-[2.5]" />
+                      <span>Cerrar sesión</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -557,6 +753,40 @@ const AppContent: React.FC = () => {
     );
   };
 
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 font-sans">
+        <Loader2 size={48} className="text-fcbq-blue animate-spin mb-4" strokeWidth={2.5} />
+        <h3 className="text-lg font-bold text-slate-800">Cargando sesión...</h3>
+        <p className="text-sm text-slate-400 mt-1">Verificando credenciales de acceso</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col relative">
+        {errorMsg && (
+          <div className="fixed top-4 left-4 right-4 z-50 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-md flex items-start gap-3 max-w-md mx-auto animate-fade-in">
+             <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={20} />
+             <div>
+               <p className="font-bold text-red-800 text-xs">Error de acceso</p>
+               <p className="text-[11px] text-red-700">{errorMsg}</p>
+             </div>
+          </div>
+        )}
+        <LoginLandingPage
+          onLoginStart={() => {
+            setErrorMsg(null);
+          }}
+          onLoginError={(msg) => {
+            setErrorMsg(msg);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col font-sans text-slate-800 bg-slate-50">
       {shouldShowStickyShell ? (
@@ -622,6 +852,25 @@ const AppContent: React.FC = () => {
           <Route path="/match-center" element={renderDataRoute('match-center')} />
           <Route path="/players" element={<PlayersPage activeCompetitionName={activeCompetitionName} />} />
           <Route path="/teams" element={<TeamsPage />} />
+          <Route path="/access_token=*" element={
+            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-12 text-center max-w-md mx-auto my-12 flex flex-col items-center justify-center min-h-[300px]">
+              <Loader2 size={48} className="text-fcbq-blue animate-spin mb-4" />
+              <h3 className="text-xl font-bold text-slate-800">Iniciando sesión segura...</h3>
+              <p className="text-slate-400 mt-2 text-sm">Espere mientras procesamos su autenticación.</p>
+            </div>
+          } />
+          <Route path="/error=*" element={
+            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-12 text-center max-w-md mx-auto my-12 flex flex-col items-center justify-center min-h-[300px]">
+              <div className="inline-block p-4 bg-red-50 rounded-full mb-4">
+                <AlertCircle size={48} className="text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">Error de autenticación</h3>
+              <p className="text-slate-500 mt-2 text-sm">Hubo un problema al iniciar sesión con Google.</p>
+              <button onClick={() => navigate('/', { replace: true })} className="mt-6 px-6 py-2 bg-fcbq-blue text-white rounded-xl hover:bg-fcbq-dark transition-colors font-semibold text-xs uppercase tracking-wider">
+                Volver al inicio
+              </button>
+            </div>
+          } />
         </Routes>
       </main>
 

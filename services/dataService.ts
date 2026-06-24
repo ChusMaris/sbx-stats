@@ -1,5 +1,5 @@
 
-import { supabase } from '../supabaseClient';
+import { supabaseAnon as supabase, supabase as supabaseAuth } from '../supabaseClient';
 import { 
     Temporada, Categoria, Competicion, Partido, Equipo, EstadisticaJugadorPartido, PartidoMovimiento, PlayerAggregatedStats, ScoutingReport, CalendarioItem, CareerStats, ParallelStats, GlobalPlayerFilters, GlobalPlayerRow, GlobalTeamFilters, GlobalTeamPhaseBreakdown, GlobalTeamRow, GlobalTeamSeasonBreakdown
 } from '../types';
@@ -1325,7 +1325,7 @@ export const createCalendarioEntry = async (entry: {
     equipo_visitante_id: number | string;
     fecha_hora: string;
 }) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth
         .from('calendario')
         .insert([entry])
         .select();
@@ -1341,7 +1341,7 @@ export const updateCalendarioEntry = async (id: number | string, entry: {
     equipo_visitante_id: number | string;
     fecha_hora: string;
 }) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth
         .from('calendario')
         .update(entry)
         .eq('id', id)
@@ -1358,7 +1358,7 @@ export const updatePartidoEntry = async (id: number | string, entry: {
     equipo_visitante_id: number | string;
     fecha_hora: string;
 }) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth
         .from('partidos')
         .update(entry)
         .eq('id', id)
@@ -1373,13 +1373,13 @@ export const deleteMatch = async (id: number | string) => {
     // Identify if it's a calendar entry (prefixed with cal_) or a real match
     if (strId.startsWith('cal_')) {
         const realId = strId.replace('cal_', '');
-        const { error } = await supabase
+        const { error } = await supabaseAuth
             .from('calendario')
             .delete()
             .eq('id', realId);
         if (error) throw error;
     } else {
-        const { error } = await supabase
+        const { error } = await supabaseAuth
             .from('partidos')
             .delete()
             .eq('id', id);
