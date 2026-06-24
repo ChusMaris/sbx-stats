@@ -11,7 +11,7 @@ import PlayersPage from './components/PlayersPage';
 import TeamsPage from './components/TeamsPage';
 import LoginLandingPage from './components/LoginLandingPage';
 import { supabase } from './supabaseClient';
-import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users, Home, User, LogOut } from 'lucide-react';
+import { Loader2, Trophy, AlertCircle, BarChart3, CalendarDays, Shield, Unlock, Users, Home, User, LogOut, LogIn } from 'lucide-react';
 import { getActiveCompetition, getRecentCompetitions, setActiveCompetition, upsertRecentCompetition } from './utils/competitionStorage';
 
 type ViewDataState = {
@@ -31,8 +31,62 @@ const AppContent: React.FC = () => {
   // --- Auth & Profile States ---
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [authBypassed, setAuthBypassed] = useState<boolean>(() => {
+    return localStorage.getItem('catstats_bypass_auth') === 'true';
+  });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Parse URL parameters smoothly to toggle Google Auth requirement (?auth=false or ?login=off)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authParam = params.get('auth');
+    const loginParam = params.get('login');
+    
+    let didChange = false;
+
+    if (authParam === 'false' || loginParam === 'off') {
+      localStorage.setItem('catstats_bypass_auth', 'true');
+      setAuthBypassed(true);
+      didChange = true;
+      console.log("🔑 Google Auth desactivado por URL (?login=off / ?auth=false)");
+    } else if (authParam === 'true' || loginParam === 'on') {
+      localStorage.setItem('catstats_bypass_auth', 'false');
+      setAuthBypassed(false);
+      didChange = true;
+      console.log("🔑 Google Auth activado por URL (?login=on / ?auth=true)");
+    }
+
+    if (didChange) {
+      // Remove query parameters from URL without reloading
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  }, []);
+
+  // Check database configuration (if adjustments table exists, they can toggle globally)
+  const checkDatabaseAuthSetting = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ajustes')
+        .select('valor')
+        .eq('clave', 'requiere_login')
+        .maybeSingle();
+
+      if (!error && data) {
+        const requiereLogin = data.valor === 'true' || data.valor === true || data.valor === '1';
+        if (!requiereLogin) {
+          console.log("🌐 Configuración global de base de datos activa: requiere_login = false. Desactivando Google Login.");
+          setAuthBypassed(true);
+          localStorage.setItem('catstats_bypass_auth', 'true');
+        } else {
+          console.log("🌐 Configuración global de base de datos activa: requiere_login = true.");
+        }
+      }
+    } catch (e) {
+      // Ignore if table public.ajustes doesn't exist yet
+    }
+  };
 
   // 1. Check if the app runs inside a popup to process the OAuth code/token and notify the parent
   useEffect(() => {
@@ -98,6 +152,9 @@ const AppContent: React.FC = () => {
   // 3. Check current active session
   const checkUserSession = async () => {
     try {
+      // First check DB adjustments global toggle
+      await checkDatabaseAuthSetting();
+
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
@@ -621,21 +678,35 @@ const AppContent: React.FC = () => {
                 >
                   <div className="px-4 py-2 border-b border-slate-100">
                     <p className="font-extrabold text-sm text-slate-900 truncate">
-                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario'}
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Modo Invitado'}
                     </p>
                     <p className="text-[10px] text-slate-400 font-semibold truncate mt-0.5">
-                      {user?.email}
+                      {user?.email || 'Acceso Libre'}
                     </p>
                   </div>
                   
                   <div className="p-1.5">
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-600 hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
-                    >
-                      <LogOut size={14} className="stroke-[2.5]" />
-                      <span>Cerrar sesión</span>
-                    </button>
+                    {user ? (
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-600 hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
+                      >
+                        <LogOut size={14} className="stroke-[2.5]" />
+                        <span>Cerrar sesión</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          localStorage.setItem('catstats_bypass_auth', 'false');
+                          setAuthBypassed(false);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-fcbq-blue hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
+                      >
+                        <LogIn size={14} className="stroke-[2.5]" />
+                        <span>Iniciar sesión (Google)</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -763,7 +834,7 @@ const AppContent: React.FC = () => {
     );
   }
 
-  if (!user) {
+  if (!user && !authBypassed) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col relative">
         {errorMsg && (
