@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { Loader2, Trophy, ShieldAlert, BadgeCheck } from 'lucide-react';
 // @ts-ignore
-import logoImg from '../src/assets/images/fedstats_logo_1782333193896.jpg';
+import logoImg from '../src/assets/images/FedStat_logo.png';
 
 interface LoginLandingPageProps {
   onLoginStart: () => void;
@@ -55,10 +55,10 @@ const LoginLandingPage: React.FC<LoginLandingPageProps> = ({ onLoginStart, onLog
         </div>
         <div className="text-left">
           <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none">
-            FEDSTATS
+            FedStats
           </h2>
-          <span className="text-[9px] text-primary uppercase tracking-widest font-bold">
-            Basketball Analytics
+          <span className="text-[9px] text-primary uppercase tracking-wider font-bold">
+            Estadístiques
           </span>
         </div>
       </div>

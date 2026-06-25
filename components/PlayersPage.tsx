@@ -694,11 +694,11 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                                 {isFavorite ? <Star size={14} className="text-amber-500 fill-amber-500" /> : <StarOff size={14} className="text-outline-variant" />}
                               </button>
 
-                              <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container border border-outline-variant overflow-hidden shrink-0 bg-white">
+                              <div className="w-8 h-8 rounded-full border border-outline-variant overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
                                 {player.fotoUrl ? (
-                                  <img src={player.fotoUrl} alt={player.nombre} className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
+                                  <img src={player.fotoUrl} alt={player.nombre} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                 ) : (
-                                  <span className="material-symbols-outlined text-[20px]">person</span>
+                                  <span className="material-symbols-outlined text-[20px] text-slate-400">person</span>
                                 )}
                               </div>
                               <div className="min-w-0 flex-1">

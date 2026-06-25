@@ -8,7 +8,7 @@ import StatsView from './components/StatsView';
 import ScoutingView from './components/ScoutingView';
 import LandingPage from './components/LandingPage';
 // @ts-ignore
-import logoImg from './src/assets/images/fedstats_logo_1782333193896.jpg';
+import logoImg from './src/assets/images/FedStat_logo.png';
 import PlayersPage from './components/PlayersPage';
 import TeamsPage from './components/TeamsPage';
 import LoginLandingPage from './components/LoginLandingPage';
@@ -591,10 +591,15 @@ const AppContent: React.FC = () => {
             />
           </div>
           
-          <h1 className="text-headline-md font-bold tracking-tight flex items-center gap-1.5 leading-none">
-            FEDSTATS
-            {isAdmin && <span className="flex h-2 w-2 rounded-full bg-green-400 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span></span>}
-          </h1>
+          <div className="flex flex-col justify-center">
+            <h1 className="text-headline-md font-bold tracking-tight flex items-center gap-1.5 leading-none">
+              FedStats
+              {isAdmin && <span className="flex h-2 w-2 rounded-full bg-green-400 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span></span>}
+            </h1>
+            <span className="text-[9px] md:text-[10px] text-slate-200/90 leading-tight font-medium mt-0.5">
+              Estadístiques
+            </span>
+          </div>
         </div>
       </div>
 
@@ -954,7 +959,7 @@ const AppContent: React.FC = () => {
       </main>
 
       <footer className="w-full bg-tertiary text-on-tertiary py-lg px-margin-desktop space-y-md flex flex-col items-center text-center pb-24 md:pb-10 mt-auto">
-        <h2 className="text-headline-md font-bold text-on-tertiary">FEDSTATS</h2>
+        <h2 className="text-headline-md font-bold text-on-tertiary">FedStats</h2>
         <p className="text-body-md font-body-md opacity-70">© {new Date().getFullYear()} FedStats. Datos no oficiales para uso analítico.</p>
 
         <nav className="flex flex-wrap justify-center gap-md">

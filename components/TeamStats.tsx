@@ -670,21 +670,19 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                       <div className="p-4 flex items-center justify-between gap-xs">
                         {/* Local Team */}
                         <div className="flex-1 flex flex-col items-center min-w-0">
-                          {isLocalMyTeam ? (
+                          {match.local.logo ? (
+                            <div className={`w-12 h-12 rounded-2xl bg-white border flex items-center justify-center mb-xs shadow-md shrink-0 ${
+                              isLocalMyTeam ? 'border-primary ring-2 ring-primary/10' : 'border-outline-variant/50'
+                            }`}>
+                              <img src={match.local.logo} alt="" className="w-full h-full object-contain p-1 rounded-2xl" referrerPolicy="no-referrer" />
+                            </div>
+                          ) : isLocalMyTeam ? (
                             <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mb-xs shadow-lg shadow-primary/20 ring-2 ring-primary/10 shrink-0">
-                              {match.local.logo ? (
-                                <img src={match.local.logo} alt="" className="w-8 h-8 object-contain rounded-xl" referrerPolicy="no-referrer" />
-                              ) : (
-                                <span className="material-symbols-outlined text-on-primary text-2xl">sports_basketball</span>
-                              )}
+                              <span className="material-symbols-outlined text-on-primary text-2xl">sports_basketball</span>
                             </div>
                           ) : (
                             <div className="w-12 h-12 rounded-2xl bg-surface-container-high border border-outline-variant/50 flex items-center justify-center mb-xs shadow-inner shrink-0">
-                              {match.local.logo ? (
-                                <img src={match.local.logo} alt="" className="w-8 h-8 object-contain rounded-xl" referrerPolicy="no-referrer" />
-                              ) : (
-                                <span className="material-symbols-outlined text-outline text-2xl">shield</span>
-                              )}
+                              <span className="material-symbols-outlined text-outline text-2xl">shield</span>
                             </div>
                           )}
                           <span className={`text-[10px] font-black text-center leading-tight uppercase px-1 truncate w-full ${
@@ -720,21 +718,19 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
 
                         {/* Visitor Team */}
                         <div className="flex-1 flex flex-col items-center min-w-0">
-                          {!isLocalMyTeam ? (
+                          {match.visitor.logo ? (
+                            <div className={`w-12 h-12 rounded-2xl bg-white border flex items-center justify-center mb-xs shadow-md shrink-0 ${
+                              !isLocalMyTeam ? 'border-primary ring-2 ring-primary/10' : 'border-outline-variant/50'
+                            }`}>
+                              <img src={match.visitor.logo} alt="" className="w-full h-full object-contain p-1 rounded-2xl" referrerPolicy="no-referrer" />
+                            </div>
+                          ) : !isLocalMyTeam ? (
                             <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mb-xs shadow-lg shadow-primary/20 ring-2 ring-primary/10 shrink-0">
-                              {match.visitor.logo ? (
-                                <img src={match.visitor.logo} alt="" className="w-8 h-8 object-contain rounded-xl" referrerPolicy="no-referrer" />
-                              ) : (
-                                <span className="material-symbols-outlined text-on-primary text-2xl">sports_basketball</span>
-                              )}
+                              <span className="material-symbols-outlined text-on-primary text-2xl">sports_basketball</span>
                             </div>
                           ) : (
                             <div className="w-12 h-12 rounded-2xl bg-surface-container-high border border-outline-variant/50 flex items-center justify-center mb-xs shadow-inner shrink-0">
-                              {match.visitor.logo ? (
-                                <img src={match.visitor.logo} alt="" className="w-8 h-8 object-contain rounded-xl" referrerPolicy="no-referrer" />
-                              ) : (
-                                <span className="material-symbols-outlined text-outline text-2xl">shield</span>
-                              )}
+                              <span className="material-symbols-outlined text-outline text-2xl">shield</span>
                             </div>
                           )}
                           <span className={`text-[10px] font-black text-center leading-tight uppercase px-1 truncate w-full ${
@@ -767,30 +763,30 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                           <div className="flex border-b border-outline-variant mb-4 bg-surface-container-low/40 rounded-lg p-1 gap-1">
                             <button 
                               onClick={() => setActiveMatchTeam(prev => ({ ...prev, [match.id]: 'local' }))}
-                              className={`w-1/2 min-w-0 py-2 text-xs font-bold transition-all text-center rounded-md ${
+                              className={`w-1/2 min-w-0 py-2.5 text-xs font-bold transition-all text-center rounded-lg ${
                                 activeTeamType === 'local'
-                                  ? 'bg-white text-primary shadow-sm'
-                                  : 'text-outline hover:bg-surface-container-low/60 hover:text-on-surface'
+                                  ? 'bg-primary text-white shadow-md scale-[1.01]'
+                                  : 'text-slate-500 hover:bg-surface-container-low/60 hover:text-slate-800'
                               }`}
                             >
                               <span className="block uppercase tracking-wider truncate px-2">{match.local.name}</span>
                               <span className={`block text-[10px] font-medium mt-0.5 normal-case ${
-                                activeTeamType === 'local' ? 'text-primary/75' : 'text-outline/75'
+                                activeTeamType === 'local' ? 'text-white/85' : 'text-slate-400'
                               }`}>
                                 (Local)
                               </span>
                             </button>
                             <button 
                               onClick={() => setActiveMatchTeam(prev => ({ ...prev, [match.id]: 'visitor' }))}
-                              className={`w-1/2 min-w-0 py-2 text-xs font-bold transition-all text-center rounded-md ${
+                              className={`w-1/2 min-w-0 py-2.5 text-xs font-bold transition-all text-center rounded-lg ${
                                 activeTeamType === 'visitor'
-                                  ? 'bg-white text-primary shadow-sm'
-                                  : 'text-outline hover:bg-surface-container-low/60 hover:text-on-surface'
+                                  ? 'bg-primary text-white shadow-md scale-[1.01]'
+                                  : 'text-slate-500 hover:bg-surface-container-low/60 hover:text-slate-800'
                               }`}
                             >
                               <span className="block uppercase tracking-wider truncate px-2">{match.visitor.name}</span>
                               <span className={`block text-[10px] font-medium mt-0.5 normal-case ${
-                                activeTeamType === 'visitor' ? 'text-primary/75' : 'text-outline/75'
+                                activeTeamType === 'visitor' ? 'text-white/85' : 'text-slate-400'
                               }`}>
                                 (Visitante)
                               </span>
@@ -839,10 +835,10 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                         </td>
                                         <td className="py-3 px-4 font-bold">
                                           <div className="flex items-center gap-xs">
-                                            <div className="w-5 h-5 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container border border-outline-variant/10 overflow-hidden shrink-0 bg-white">
+                                            <div className="w-6 h-6 rounded-full border border-outline-variant/10 overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
                                               <img 
                                                 src={playerMeta.fotoUrl || "https://image.singular.live/fit-in/450x450/filters:format(webp)/0d62960e1109063fb6b062e758907fb1/images/41uEQx58oj4zwPoOkM6uEO_w585h427.png"} 
-                                                className="w-full h-full object-cover rounded-full" 
+                                                className="w-full h-full object-cover" 
                                                 alt={playerMeta.nombre} 
                                                 referrerPolicy="no-referrer"
                                               />
@@ -1108,11 +1104,11 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                             </td>
                             <td className="py-2.5 px-3 font-bold">
                               <div className="flex items-center gap-xs">
-                                <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container border border-outline-variant overflow-hidden shrink-0 bg-white">
+                                <div className="w-8 h-8 rounded-full border border-outline-variant overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
                                   <img 
                                     src={player.fotoUrl || "https://image.singular.live/fit-in/450x450/filters:format(webp)/0d62960e1109063fb6b062e758907fb1/images/41uEQx58oj4zwPoOkM6uEO_w585h427.png"} 
                                     alt={player.nombre} 
-                                    className="w-full h-full object-cover rounded-full" 
+                                    className="w-full h-full object-cover" 
                                     referrerPolicy="no-referrer"
                                   />
                                 </div>
