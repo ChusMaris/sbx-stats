@@ -581,7 +581,7 @@ const AppContent: React.FC = () => {
           title={isAdmin ? "Modo Gestión Activo" : "Haz clic para Gestión"}
         >
           <div
-            className={`bg-white rounded-full flex items-center justify-center border-2 transition-all duration-300 overflow-hidden w-10 h-10 ${isAdmin ? 'border-green-400 shadow-[0_0_12px_rgba(74,222,128,0.6)] animate-pulse' : 'border-slate-200'}`}
+            className="bg-white rounded-full flex items-center justify-center border-2 border-slate-200 overflow-hidden w-10 h-10"
           >
             <img 
               className="w-full h-full object-cover rounded-full" 
@@ -594,7 +594,6 @@ const AppContent: React.FC = () => {
           <div className="flex flex-col justify-center">
             <h1 className="text-headline-md font-bold tracking-tight flex items-center gap-1.5 leading-none">
               FedStats
-              {isAdmin && <span className="flex h-2 w-2 rounded-full bg-green-400 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span></span>}
             </h1>
             <span className="text-[9px] md:text-[10px] text-slate-200/90 leading-tight font-medium mt-0.5">
               Estadístiques

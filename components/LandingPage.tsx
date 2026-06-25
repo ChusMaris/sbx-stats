@@ -426,7 +426,25 @@ const LandingPage: React.FC<LandingPageProps> = ({
         )}
       </section>
 
-      {/* 2. Competition Filters Section */}
+      {/* 2. Action Cards - Compact Link Style */}
+      <section className="grid grid-cols-2 gap-sm text-left">
+        <Link 
+          to="/players" 
+          className="flex items-center justify-center space-x-2 py-3 px-4 bg-primary-container/10 border border-primary-container/20 rounded-lg hover:bg-primary-container/20 transition-colors group"
+        >
+          <span className="material-symbols-outlined text-primary text-[20px]">group</span>
+          <span className="text-label-sm font-bold text-primary">JUGADORES</span>
+        </Link>
+        <Link 
+          to="/teams" 
+          className="flex items-center justify-center space-x-2 py-3 px-4 bg-secondary-container/10 border border-secondary-container/20 rounded-lg hover:bg-secondary-container/20 transition-colors group"
+        >
+          <span className="material-symbols-outlined text-secondary text-[20px]">shield</span>
+          <span className="text-label-sm font-bold text-secondary">EQUIPOS</span>
+        </Link>
+      </section>
+
+      {/* 3. Competition Filters Section */}
       <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-md shadow-sm text-left">
         <div className="flex items-center space-x-2 mb-md border-b border-outline-variant/20 pb-base">
           <span className="material-symbols-outlined text-primary text-[20px]">tune</span>
@@ -447,24 +465,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
           onFaseChange={onFaseChange}
           onCompeticionChange={onCompeticionChange}
         />
-      </section>
-
-      {/* 3. Action Cards - Compact Link Style */}
-      <section className="grid grid-cols-2 gap-sm text-left">
-        <Link 
-          to="/players" 
-          className="flex items-center justify-center space-x-2 py-3 px-4 bg-primary-container/10 border border-primary-container/20 rounded-lg hover:bg-primary-container/20 transition-colors group"
-        >
-          <span className="material-symbols-outlined text-primary text-[20px]">group</span>
-          <span className="text-label-sm font-bold text-primary">JUGADORES</span>
-        </Link>
-        <Link 
-          to="/teams" 
-          className="flex items-center justify-center space-x-2 py-3 px-4 bg-secondary-container/10 border border-secondary-container/20 rounded-lg hover:bg-secondary-container/20 transition-colors group"
-        >
-          <span className="material-symbols-outlined text-secondary text-[20px]">shield</span>
-          <span className="text-label-sm font-bold text-secondary">EQUIPOS</span>
-        </Link>
       </section>
 
       {/* 4. Bottom Banner: Visual Break */}
