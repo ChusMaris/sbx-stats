@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowDownUp, ChevronDown, ChevronUp, Filter, History, Loader2, RotateCcw, Search, SlidersHorizontal, Star, StarOff, X } from 'lucide-react';
 import { fetchCategorias, fetchCompeticionesByFilters, fetchEquiposByFilters, fetchGlobalTeams, fetchTemporadas } from '../services/dataService';
 import { Categoria, GlobalTeamFilters, GlobalTeamRow, Temporada } from '../types';
@@ -56,6 +57,9 @@ const inferCompetitionPhase = (competitionName: string) => {
 };
 
 const TeamsPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const initialSearch = searchParams.get('search') || '';
+
   const [temporadas, setTemporadas] = useState<Temporada[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [categoriasDisponibles, setCategoriasDisponibles] = useState<Categoria[]>([]);
@@ -70,8 +74,15 @@ const TeamsPage: React.FC = () => {
     fase: '',
     competicionNombre: '',
     equipoNombre: '',
-    clubNombre: '',
+    clubNombre: initialSearch,
   });
+
+  useEffect(() => {
+    const q = searchParams.get('search') || '';
+    if (q !== filters.clubNombre) {
+      setFilters(prev => ({ ...prev, clubNombre: q }));
+    }
+  }, [searchParams]);
 
   const [teams, setTeams] = useState<GlobalTeamRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -342,6 +353,10 @@ const TeamsPage: React.FC = () => {
           }
           return merged;
         });
+
+        if (isFirstPage && searchParams.get('search') && nextPageRows.length > 0) {
+          setExpandedClubId(String(nextPageRows[0].clubId));
+        }
 
         setHasMore(nextPageRows.length === PAGE_SIZE);
       } catch (error) {

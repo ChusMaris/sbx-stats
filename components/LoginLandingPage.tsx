@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { Loader2, Trophy, ShieldAlert, BadgeCheck } from 'lucide-react';
+// @ts-ignore
+import logoImg from '../src/assets/images/fedstats_logo_1782333193896.jpg';
 
 interface LoginLandingPageProps {
   onLoginStart: () => void;
@@ -42,23 +44,28 @@ const LoginLandingPage: React.FC<LoginLandingPageProps> = ({ onLoginStart, onLog
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between p-4 md:p-8 font-sans">
       {/* Top Header decoration */}
-      <div className="flex items-center justify-center gap-2 mt-4 md:mt-8">
-        <div className="w-10 h-10 bg-fcbq-blue rounded-full flex items-center justify-center text-white border-2 border-fcbq-accent shadow-sm">
-          <span className="font-black text-lg">B</span>
+      <div className="flex items-center justify-center gap-3 mt-4 md:mt-8">
+        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border-2 border-slate-200 overflow-hidden shadow-sm">
+          <img 
+            className="w-full h-full object-cover rounded-full" 
+            src={logoImg} 
+            alt="FEDSTATS Logo"
+            referrerPolicy="no-referrer"
+          />
         </div>
         <div className="text-left">
-          <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none uppercase">
-            Brafa Stats
+          <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none">
+            FEDSTATS
           </h2>
-          <span className="text-[9px] text-fcbq-blue uppercase tracking-widest font-bold">
-            FCBQ Analytics
+          <span className="text-[9px] text-primary uppercase tracking-widest font-bold">
+            Basketball Analytics
           </span>
         </div>
       </div>
 
       {/* Main Card */}
       <div className="w-full max-w-md mx-auto my-auto bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8 flex flex-col items-center text-center space-y-6">
-        <div className="w-16 h-16 bg-blue-50 text-fcbq-blue rounded-2xl flex items-center justify-center shadow-inner">
+        <div className="w-16 h-16 bg-blue-50 text-primary rounded-2xl flex items-center justify-center shadow-inner">
           <Trophy size={32} className="stroke-[2.2]" />
         </div>
 
@@ -117,7 +124,7 @@ const LoginLandingPage: React.FC<LoginLandingPageProps> = ({ onLoginStart, onLog
 
       {/* Footer */}
       <footer className="text-center text-xs text-slate-400 mt-8 mb-4">
-        &copy; {new Date().getFullYear()} Brafa Stats. Todos los derechos reservados.
+        &copy; {new Date().getFullYear()} FedStats. Todos los derechos reservados.
       </footer>
     </div>
   );
