@@ -446,11 +446,7 @@ const AppContent: React.FC = () => {
     }
   }, [shouldShowStickyShell, selectedCompeticion, viewData]);
 
-  useEffect(() => {
-    if ((isStatsRoute || isMatchCenterRoute) && !selectedCompeticion) {
-      navigate('/', { replace: true });
-    }
-  }, [isMatchCenterRoute, isStatsRoute, navigate, selectedCompeticion]);
+
 
   const buildRecentCompetition = (competitionId = selectedCompeticion): RecentCompetition | null => {
     if (!competitionId || !selectedTemporada || !selectedCategoria) return null;
@@ -1009,14 +1005,16 @@ const AppContent: React.FC = () => {
       </main>
 
       {!isLandingRoute && (
-        <footer className="w-full bg-tertiary text-on-tertiary py-lg px-margin-desktop space-y-md flex flex-col items-center text-center pb-24 md:pb-10 mt-auto">
-          <h2 className="text-headline-md font-bold text-on-tertiary">FedStats</h2>
-          <p className="text-body-md font-body-md opacity-70">© {new Date().getFullYear()} FedStats. Datos no oficiales para uso analítico.</p>
+        <footer className="w-full bg-tertiary text-on-tertiary py-4 px-6 flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-4 pb-24 md:pb-4 mt-auto">
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <span className="text-sm font-black tracking-wider uppercase">FedStats</span>
+            <p className="text-[11px] opacity-70">© {new Date().getFullYear()} FedStats. Datos no oficiales para uso analítico.</p>
+          </div>
 
-          <nav className="flex flex-wrap justify-center gap-md">
-            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/privacy" onClick={(e) => e.preventDefault()}>Privacidad</a>
-            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/terms" onClick={(e) => e.preventDefault()}>Términos</a>
-            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/contact" onClick={(e) => e.preventDefault()}>Contacto</a>
+          <nav className="flex justify-center gap-4 text-[11px]">
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity" href="#/privacy" onClick={(e) => e.preventDefault()}>Privacidad</a>
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity" href="#/terms" onClick={(e) => e.preventDefault()}>Términos</a>
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity" href="#/contact" onClick={(e) => e.preventDefault()}>Contacto</a>
           </nav>
         </footer>
       )}
