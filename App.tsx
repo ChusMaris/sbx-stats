@@ -8,7 +8,7 @@ import StatsView from './components/StatsView';
 import ScoutingView from './components/ScoutingView';
 import LandingPage from './components/LandingPage';
 // @ts-ignore
-import logoImg from './src/assets/images/FedStat_logo.png';
+import logoImg from './src/assets/images/fedstats_header_logo.png';
 import PlayersPage from './components/PlayersPage';
 import TeamsPage from './components/TeamsPage';
 import LoginLandingPage from './components/LoginLandingPage';
@@ -576,29 +576,16 @@ const AppContent: React.FC = () => {
     <header className={`bg-primary text-white shadow-md transition-all duration-300 w-full h-16 flex items-center justify-between px-margin-mobile md:px-margin-desktop shrink-0 ${sticky ? '' : 'relative'}`}>
       <div className="flex items-center gap-3">
         <div
-          className="flex items-center gap-3 overflow-hidden cursor-pointer select-none active:scale-95 transition-transform"
+          className="flex items-center overflow-hidden cursor-pointer select-none active:scale-95 transition-transform"
           onClick={handleSecretClick}
           title={isAdmin ? "Modo Gestión Activo" : "Haz clic para Gestión"}
         >
-          <div
-            className="bg-white rounded-full flex items-center justify-center border-2 border-slate-200 overflow-hidden w-10 h-10"
-          >
-            <img 
-              className="w-full h-full object-cover rounded-full" 
-              src={logoImg} 
-              alt="FEDSTATS Logo"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-          
-          <div className="flex flex-col justify-center">
-            <h1 className="text-headline-md font-bold tracking-tight flex items-center gap-1.5 leading-none">
-              FedStats
-            </h1>
-            <span className="text-[9px] md:text-[10px] text-slate-200/90 leading-tight font-medium mt-0.5">
-              Estadístiques
-            </span>
-          </div>
+          <img 
+            className="h-12 md:h-14 w-auto object-contain" 
+            src={logoImg} 
+            alt="FedStats Logo"
+            referrerPolicy="no-referrer"
+          />
         </div>
       </div>
 
@@ -608,12 +595,12 @@ const AppContent: React.FC = () => {
         <nav className="hidden md:flex items-center gap-1.5">
           <NavLink
             to="/"
-            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
+            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
           >
             <Home size={14} />
             <span>Inicio</span>
           </NavLink>
-
+ 
           <NavLink
             to="/stats"
             onClick={(e) => {
@@ -622,12 +609,12 @@ const AppContent: React.FC = () => {
                 alert("Por favor, selecciona primero una competición.");
               }
             }}
-            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
+            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
           >
             <BarChart3 size={14} />
             <span>Estadísticas</span>
           </NavLink>
-
+ 
           <NavLink
             to="/match-center"
             onClick={(e) => {
@@ -636,23 +623,23 @@ const AppContent: React.FC = () => {
                 alert("Por favor, selecciona primero una competición.");
               }
             }}
-            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
+            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${!selectedCompeticion ? 'opacity-40 cursor-not-allowed' : isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
           >
             <CalendarDays size={14} />
             <span>Match Center</span>
           </NavLink>
-
+ 
           <NavLink
             to="/players"
-            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
+            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
           >
             <Users size={14} />
             <span>Jugadores</span>
           </NavLink>
-
+ 
           <NavLink
             to="/teams"
-            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
+            className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider transition-all duration-200 border border-transparent ${isActive ? 'bg-white/15 text-white shadow-sm font-black border-white/10' : 'text-slate-200 hover:bg-white/10 hover:text-white'}`}
           >
             <Shield size={14} />
             <span>Equipos</span>
@@ -854,7 +841,7 @@ const AppContent: React.FC = () => {
              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={20} />
              <div>
                <p className="font-bold text-red-800 text-xs">Error de acceso</p>
-               <p className="text-[11px] text-red-700">{errorMsg}</p>
+               <p className="text-[14px] text-red-700">{errorMsg}</p>
              </div>
           </div>
         )}
@@ -871,8 +858,72 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-slate-800 bg-slate-50">
-      {shouldShowStickyShell ? (
+    <div className={`min-h-screen flex flex-col font-sans text-slate-800 ${isLandingRoute ? 'bg-white' : 'bg-slate-50'}`}>
+      {isLandingRoute ? (
+        /* Transparent minimal header for LandingPage */
+        <header className="flex justify-end items-center px-6 h-16 w-full fixed top-0 right-0 z-50 bg-transparent">
+          <div className="flex items-center space-x-4 pr-2 md:pr-4 pt-4">
+            {/* Profile Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200/60 flex items-center justify-center overflow-hidden cursor-pointer hover:bg-slate-200 transition-colors focus:outline-none"
+                aria-label="Menú de usuario"
+              >
+                {user?.user_metadata?.avatar_url || user?.user_metadata?.picture ? (
+                  <img
+                    src={user.user_metadata.avatar_url || user.user_metadata.picture}
+                    alt="Avatar"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="material-symbols-outlined text-[24px] text-slate-500">person</span>
+                )}
+              </button>
+
+              {isDropdownOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/80 py-2.5 z-50 text-slate-800 animate-fade-in origin-top-right text-left"
+                >
+                  <div className="px-4 py-2 border-b border-slate-100">
+                    <p className="font-extrabold text-sm text-slate-900 truncate">
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Modo Invitado'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-semibold truncate mt-0.5">
+                      {user?.email || 'Acceso Libre'}
+                    </p>
+                  </div>
+                  
+                  <div className="p-1.5">
+                    {user ? (
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-600 hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
+                      >
+                        <LogOut size={14} className="stroke-[2.5]" />
+                        <span>Cerrar sesión</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          localStorage.setItem('catstats_bypass_auth', 'false');
+                          setAuthBypassed(false);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-fcbq-blue hover:bg-neutral-50 font-bold text-xs transition-colors text-left cursor-pointer"
+                      >
+                        <LogIn size={14} className="stroke-[2.5]" />
+                        <span>Iniciar sesión (Google)</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+      ) : shouldShowStickyShell ? (
         <div className="sticky top-0 z-40 bg-white shadow-md flex flex-col transition-all duration-300">
           {renderTopHeader(true)}
           <CompetitionFilters
@@ -897,7 +948,7 @@ const AppContent: React.FC = () => {
         renderTopHeader(false)
       )}
 
-      <main className={`flex-grow container mx-auto px-2 md:px-4 ${isLandingRoute ? 'py-6 md:py-8' : 'py-8'} pb-24 md:pb-8 relative z-10`}>
+      <main className={`flex-grow container mx-auto px-2 md:px-4 ${isLandingRoute ? 'py-0' : 'py-8'} pb-24 md:pb-8 relative z-10`}>
         {errorMsg && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r shadow-sm flex items-start gap-3">
              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={24} />
@@ -957,16 +1008,18 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      <footer className="w-full bg-tertiary text-on-tertiary py-lg px-margin-desktop space-y-md flex flex-col items-center text-center pb-24 md:pb-10 mt-auto">
-        <h2 className="text-headline-md font-bold text-on-tertiary">FedStats</h2>
-        <p className="text-body-md font-body-md opacity-70">© {new Date().getFullYear()} FedStats. Datos no oficiales para uso analítico.</p>
+      {!isLandingRoute && (
+        <footer className="w-full bg-tertiary text-on-tertiary py-lg px-margin-desktop space-y-md flex flex-col items-center text-center pb-24 md:pb-10 mt-auto">
+          <h2 className="text-headline-md font-bold text-on-tertiary">FedStats</h2>
+          <p className="text-body-md font-body-md opacity-70">© {new Date().getFullYear()} FedStats. Datos no oficiales para uso analítico.</p>
 
-        <nav className="flex flex-wrap justify-center gap-md">
-          <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/privacy" onClick={(e) => e.preventDefault()}>Privacidad</a>
-          <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/terms" onClick={(e) => e.preventDefault()}>Términos</a>
-          <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/contact" onClick={(e) => e.preventDefault()}>Contacto</a>
-        </nav>
-      </footer>
+          <nav className="flex flex-wrap justify-center gap-md">
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/privacy" onClick={(e) => e.preventDefault()}>Privacidad</a>
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/terms" onClick={(e) => e.preventDefault()}>Términos</a>
+            <a className="text-on-tertiary opacity-70 hover:opacity-100 transition-opacity text-body-md font-body-md" href="#/contact" onClick={(e) => e.preventDefault()}>Contacto</a>
+          </nav>
+        </footer>
+      )}
       {renderBottomNav()}
     </div>
   );

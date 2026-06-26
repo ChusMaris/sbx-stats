@@ -210,44 +210,44 @@ const Standings: React.FC<StandingsProps> = ({ equipos, partidos, esMini, onSele
                           </div>
                         )}
                       </div>
-                      <span className={`text-[11px] truncate uppercase max-w-[160px] sm:max-w-xs ${
+                      <span className={`text-[14px] truncate uppercase max-w-[160px] sm:max-w-xs ${
                         isSelected ? 'font-bold text-primary' : 'text-on-surface-variant font-medium'
                       }`}>
                         {team.nombre}
                       </span>
                     </div>
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.pj}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.pg}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.pp}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.pf}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.pc}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center text-[11px] ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center text-[14px] ${
                     isSelected ? 'font-bold text-primary' : 'text-slate-600'
                   }`}>
                     {team.diff > 0 ? `+${team.diff}` : team.diff}
                   </td>
-                  <td className={`px-base py-2.5 text-data-tabular text-center font-bold text-[11px] pr-4 ${
+                  <td className={`px-base py-2.5 text-data-tabular text-center font-bold text-[14px] pr-4 ${
                     isSelected ? 'text-primary' : 'text-slate-800'
                   }`}>
                     {team.puntos}

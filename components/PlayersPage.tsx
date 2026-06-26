@@ -629,7 +629,7 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
             <Search size={16} className="text-fcbq-blue" />
             {isLoading ? 'Buscando jugadores...' : `${visiblePlayers.length} jugadores`}
           </p>
-          <p className="text-[11px] uppercase font-bold tracking-wide text-slate-400">{onlyFavorites ? 'Solo favoritos' : 'Favoritos primero'}</p>
+          <p className="text-[14px] uppercase font-bold tracking-wide text-slate-400">{onlyFavorites ? 'Solo favoritos' : 'Favoritos primero'}</p>
         </div>
 
         {errorMsg && (
@@ -654,7 +654,7 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                 <thead>
                   <tr className="text-on-surface-variant opacity-70 bg-surface-container-low border-b border-outline-variant uppercase text-[10px]">
                     {renderSortHeader('#', 'dorsal', 'center', 'w-[48px] py-xs px-sm font-semibold')}
-                    {renderSortHeader('Jugador', 'nombre', 'left', 'w-[240px] py-xs px-sm font-semibold')}
+                    {renderSortHeader('Jugador', 'nombre', 'left', 'w-[100px] sm:w-[240px] py-xs px-sm font-semibold')}
                     {renderSortHeader('PJ', 'partidosJugados', 'center', 'w-12 py-xs px-xs font-semibold')}
                     {renderSortHeader('PPG', 'ppg', 'center', 'w-12 py-xs px-xs font-semibold')}
                     {renderSortHeader('MPG', 'mpg', 'center', 'w-12 py-xs px-xs font-semibold')}
@@ -677,7 +677,7 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                           onClick={() => setExpandedPlayerId(isExpanded ? null : String(player.jugadorId))}
                           className={`transition-colors cursor-pointer border-l-4 ${isExpanded ? 'bg-surface-container-low/50 border-primary' : 'hover:bg-surface-container-low border-transparent'}`}
                         >
-                          <td className="py-sm px-sm font-bold text-center text-outline text-[11px]">
+                          <td className="py-sm px-sm font-bold text-center text-outline text-[14px]">
                             {player.dorsal}
                           </td>
                           <td className="py-sm px-sm font-bold">
@@ -702,19 +702,19 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                                 )}
                               </div>
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1">
-                                  <span className="leading-none text-[12px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[140px]">
-                                    {player.nombre}
-                                  </span>
-                                  {isExpanded ? <ChevronUp size={12} className="text-outline shrink-0" /> : <ChevronDown size={12} className="text-outline shrink-0" />}
+                                  <div className="flex items-center gap-1">
+                                    <span className="leading-none text-[12px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[85px] xs:max-w-[120px] sm:max-w-[200px] md:max-w-[320px]">
+                                      {player.nombre}
+                                    </span>
+                                    {isExpanded ? <ChevronUp size={12} className="text-outline shrink-0" /> : <ChevronDown size={12} className="text-outline shrink-0" />}
+                                  </div>
+                                  {player.equipos.length > 0 && (
+                                    <p className="text-[10px] text-slate-400 font-medium truncate max-w-[85px] xs:max-w-[120px] sm:max-w-[200px] md:max-w-[320px] mt-0.5 leading-none">
+                                      {player.equipos.slice(0, 2).map((team) => team.nombre).join(' · ')}
+                                      {player.equipos.length > 2 ? ` +${player.equipos.length - 2}` : ''}
+                                    </p>
+                                  )}
                                 </div>
-                                {player.equipos.length > 0 && (
-                                  <p className="text-[10px] text-slate-400 font-medium truncate max-w-[140px] mt-0.5 leading-none">
-                                    {player.equipos.slice(0, 2).map((team) => team.nombre).join(' · ')}
-                                    {player.equipos.length > 2 ? ` +${player.equipos.length - 2}` : ''}
-                                  </p>
-                                )}
-                              </div>
                             </div>
                           </td>
                           <td className="py-sm px-xs text-center text-[12px] text-slate-600 font-medium">{player.partidosJugados}</td>
@@ -749,7 +749,7 @@ const PlayersPage: React.FC<PlayersPageProps> = () => {
                               <tr key={`${player.jugadorId}-desglose-${idx}`} className="bg-surface-container-low/10 transition-colors border-b border-outline-variant/50">
                                 <td className="px-xs py-2 text-left pl-10" colSpan={2}>
                                   <div className="text-xs font-semibold text-slate-700">{d.temporada}</div>
-                                  <div className="text-[11px] text-slate-500">{d.categoria}</div>
+                                  <div className="text-[14px] text-slate-500">{d.categoria}</div>
                                 </td>
                                 <td className="px-xs py-2 text-center text-xs text-slate-600 font-medium">{d.partidosJugados}</td>
                                 <td className="px-xs py-2 text-center text-xs font-bold text-primary">{Number(d.ppg ?? 0).toFixed(1)}</td>

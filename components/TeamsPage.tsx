@@ -656,7 +656,7 @@ const TeamsPage: React.FC = () => {
             <Search size={16} className="text-fcbq-blue" />
             {isLoading ? 'Buscando equipos...' : `${visibleTeams.length} clubes`}
           </p>
-          <p className="text-[11px] uppercase font-bold tracking-wide text-slate-400">{onlyFavorites ? 'Solo favoritos' : 'Favoritos primero'}</p>
+          <p className="text-[14px] uppercase font-bold tracking-wide text-slate-400">{onlyFavorites ? 'Solo favoritos' : 'Favoritos primero'}</p>
         </div>
 
         {errorMsg && (
@@ -729,7 +729,7 @@ const TeamsPage: React.FC = () => {
                                 {team.logoUrl ? (
                                   <img src={team.logoUrl} alt={team.nombre} className="w-full h-full object-cover" />
                                 ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-[11px] text-slate-400 font-bold">C</div>
+                                  <div className="w-full h-full flex items-center justify-center text-[14px] text-slate-400 font-bold">C</div>
                                 )}
                               </div>
                               <div>
@@ -738,7 +738,7 @@ const TeamsPage: React.FC = () => {
                                   {isExpanded ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
                                 </p>
                                 {team.equipos.length > 0 && (
-                                  <p className="text-[11px] text-slate-400 truncate max-w-[260px]">
+                                  <p className="text-[14px] text-slate-400 truncate max-w-[260px]">
                                     {team.equipos.slice(0, 2).map((clubTeam) => clubTeam.nombre).join(' · ')}
                                     {team.equipos.length > 2 ? ` +${team.equipos.length - 2}` : ''}
                                   </p>
@@ -785,7 +785,7 @@ const TeamsPage: React.FC = () => {
                                           {season.temporada}
                                           {isSeasonExpanded ? <ChevronUp size={12} className="text-slate-400" /> : <ChevronDown size={12} className="text-slate-400" />}
                                         </div>
-                                        <div className="text-[11px] text-slate-500">{season.categoria}</div>
+                                        <div className="text-[14px] text-slate-500">{season.categoria}</div>
                                       </div>
                                     </td>
                                     {renderTotalsCells(season, 'text-xs')}
@@ -796,11 +796,11 @@ const TeamsPage: React.FC = () => {
                                       <td className="px-3 py-2"></td>
                                       <td className="px-3 py-2 text-left min-w-[260px]">
                                         <div className="pl-8">
-                                          <div className="text-[11px] font-semibold text-slate-700">{phase.fase}</div>
+                                          <div className="text-[14px] font-semibold text-slate-700">{phase.fase}</div>
                                           <div className="text-[10px] text-slate-500 uppercase tracking-wide">{phase.competicionNombre}</div>
                                         </div>
                                       </td>
-                                      {renderTotalsCells(phase, 'text-[11px]')}
+                                      {renderTotalsCells(phase, 'text-[14px]')}
                                     </tr>
                                   ))}
                                 </React.Fragment>

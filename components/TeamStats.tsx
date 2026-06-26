@@ -78,7 +78,7 @@ const MiniDonut = ({ value }: { value: number }) => {
                 className="transition-all duration-1000 ease-out"
               />
           </svg>
-          <span className="absolute text-[11px] font-black text-slate-700">{Math.round(normalizedValue)}%</span>
+          <span className="absolute text-[14px] font-black text-slate-700">{Math.round(normalizedValue)}%</span>
       </div>
   );
 };
@@ -558,11 +558,11 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                         <div className="flex flex-col gap-1 w-full min-w-0 flex-1 pr-4">
                           <div className="flex items-center justify-between mb-1">
                             <div className="flex items-center gap-xs">
-                              <span className="text-[9px] font-black text-outline uppercase tracking-tighter">
+                              <span className="text-[10px] font-black text-outline uppercase tracking-tighter">
                                 Jornada {match.jornada || '-'}
                               </span>
                               <span className="w-0.5 h-0.5 bg-outline-variant rounded-full"></span>
-                              <span className="text-[9px] font-semibold text-outline">
+                              <span className="text-[10px] font-semibold text-outline">
                                 {formatDate(match.fecha_hora)}
                               </span>
                             </div>
@@ -591,7 +591,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                   </span>
                                 </div>
                               )}
-                              <span className={`text-[11px] font-bold truncate ${
+                              <span className={`text-[14px] font-bold truncate ${
                                 match.local.isMyTeam ? 'text-primary' : 'text-outline'
                               }`}>
                                 {match.local.name}
@@ -600,18 +600,26 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
 
                             {/* Score Pill */}
                             <div className="flex items-center gap-2 px-2 py-0.5 bg-primary/5 rounded-lg shrink-0">
-                              <span className={`text-[13px] font-black ${match.local.isMyTeam ? 'text-on-surface' : 'text-outline'}`}>
+                              <span className={`text-[13px] font-black ${
+                                match.local.score !== null && match.visitor.score !== null && match.local.score > match.visitor.score
+                                  ? 'text-emerald-600 font-extrabold'
+                                  : match.local.isMyTeam ? 'text-on-surface' : 'text-outline'
+                              }`}>
                                 {match.local.score !== null ? match.local.score : '-'}
                               </span>
                               <span className="text-[10px] font-bold text-outline">-</span>
-                              <span className={`text-[13px] font-black ${match.visitor.isMyTeam ? 'text-on-surface' : 'text-outline'}`}>
+                              <span className={`text-[13px] font-black ${
+                                match.local.score !== null && match.visitor.score !== null && match.visitor.score > match.local.score
+                                  ? 'text-emerald-600 font-extrabold'
+                                  : match.visitor.isMyTeam ? 'text-on-surface' : 'text-outline'
+                              }`}>
                                 {match.visitor.score !== null ? match.visitor.score : '-'}
                               </span>
                             </div>
 
                             {/* Visitor Team */}
                             <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
-                              <span className={`text-[11px] font-bold truncate text-right ${
+                              <span className={`text-[14px] font-bold truncate text-right ${
                                 match.visitor.isMyTeam ? 'text-primary' : 'text-outline'
                               }`}>
                                 {match.visitor.name}
@@ -661,7 +669,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                             {formatDate(match.fecha_hora)}
                           </span>
                         </div>
-                        <div className="flex items-center gap-xs px-2 py-0.5 bg-primary rounded text-[9px] font-black text-on-primary uppercase tracking-tighter shrink-0">
+                        <div className="flex items-center gap-xs px-2 py-0.5 bg-primary rounded text-[10px] font-black text-on-primary uppercase tracking-tighter shrink-0">
                           {match.puntos_local !== null && match.puntos_visitante !== null ? 'Finalizado' : 'Programado'}
                         </div>
                       </div>
@@ -695,11 +703,19 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                         {/* Scores & Outcome */}
                         <div className="px-2 flex flex-col items-center shrink-0">
                           <div className="flex items-center gap-sm">
-                            <span className={`text-3xl font-black ${isLocalMyTeam ? 'text-primary' : 'text-on-surface'}`}>
+                            <span className={`text-3xl font-black ${
+                              match.local.score !== null && match.visitor.score !== null && match.local.score > match.visitor.score
+                                ? 'text-emerald-600 font-extrabold'
+                                : isLocalMyTeam ? 'text-primary' : 'text-on-surface'
+                            }`}>
                               {match.local.score}
                             </span>
                             <span className="text-primary-container font-bold text-xl">-</span>
-                            <span className={`text-3xl font-black ${!isLocalMyTeam ? 'text-primary' : 'text-on-surface'}`}>
+                            <span className={`text-3xl font-black ${
+                              match.local.score !== null && match.visitor.score !== null && match.visitor.score > match.local.score
+                                ? 'text-emerald-600 font-extrabold'
+                                : !isLocalMyTeam ? 'text-primary' : 'text-on-surface'
+                            }`}>
                               {match.visitor.score}
                             </span>
                           </div>
@@ -707,7 +723,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                             <div className={`mt-2 px-2.5 py-0.5 rounded-full ${
                               isWin ? 'bg-primary/10' : isDraw ? 'bg-outline/10' : 'bg-red-50'
                             }`}>
-                              <span className={`text-[9px] font-bold uppercase tracking-wider ${
+                              <span className={`text-[10px] font-bold uppercase tracking-wider ${
                                 isWin ? 'text-primary' : isDraw ? 'text-outline' : 'text-red-600'
                               }`}>
                                 {isWin ? 'Victoria' : isDraw ? 'Empate' : 'Derrota'}
@@ -812,7 +828,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                 <thead>
                                   <tr className="text-on-surface-variant opacity-70 bg-surface-container-low border-b border-outline-variant uppercase text-[10px]">
                                     <th className="py-2 px-4 font-semibold text-center w-12 bg-surface-container-low">#</th>
-                                    <th className="py-2 px-4 font-semibold text-left w-[160px] bg-surface-container-low">Jugador</th>
+                                    <th className="py-2 px-4 font-semibold text-left w-[100px] sm:w-[160px] bg-surface-container-low">Jugador</th>
                                     <th className="py-2 px-2 font-semibold text-center w-14 bg-surface-container-low">MIN</th>
                                     <th className="py-2 px-2 font-semibold text-center w-12 bg-surface-container-low">PTS</th>
                                     <th className="py-2 px-2 font-semibold text-center w-12 bg-surface-container-low text-primary">VAL</th>
@@ -829,8 +845,8 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                     const fouls = (item.faltas_cometidas || 0) + (item.tecnicas || 0) + (item.antideportivas || 0);
 
                                     return (
-                                      <tr key={`${match.id}-${item.jugador_id}`} className="hover:bg-surface-container-low transition-colors text-[11px] font-medium">
-                                        <td className="py-3 px-4 font-bold text-center text-[11px] text-outline">
+                                      <tr key={`${match.id}-${item.jugador_id}`} className="hover:bg-surface-container-low transition-colors text-[14px] font-medium">
+                                        <td className="py-3 px-4 font-bold text-center text-[14px] text-outline">
                                           {playerMeta.dorsal}
                                         </td>
                                         <td className="py-3 px-4 font-bold">
@@ -843,21 +859,21 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                                 referrerPolicy="no-referrer"
                                               />
                                             </div>
-                                            <span className="leading-none text-[11px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[140px]">
+                                            <span className="leading-none text-[14px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[85px] xs:max-w-[120px] sm:max-w-[200px] md:max-w-[320px]">
                                               {playerMeta.nombre}
                                             </span>
                                           </div>
                                         </td>
-                                        <td className="py-3 px-2 text-center text-[11px] text-slate-600 font-medium">
+                                        <td className="py-3 px-2 text-center text-[14px] text-slate-600 font-medium">
                                           {formatTiempoPartido(item.tiempo_jugado)}
                                         </td>
-                                        <td className="py-3 px-2 text-center font-bold text-[11px] text-primary">
+                                        <td className="py-3 px-2 text-center font-bold text-[14px] text-primary">
                                           {item.puntos || 0}
                                         </td>
-                                        <td className="py-3 px-2 text-center font-bold text-[11px] text-primary">
+                                        <td className="py-3 px-2 text-center font-bold text-[14px] text-primary">
                                           {item.valoracion || 0}
                                         </td>
-                                        <td className={`py-3 px-2 text-center font-bold text-[11px] ${
+                                        <td className={`py-3 px-2 text-center font-bold text-[14px] ${
                                           (item.mas_menos || 0) > 0 
                                             ? 'text-green-600' 
                                             : (item.mas_menos || 0) < 0 
@@ -866,16 +882,16 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                         }`}>
                                           {(item.mas_menos || 0) > 0 ? '+' : ''}{item.mas_menos || 0}
                                         </td>
-                                        <td className="py-3 px-2 text-center text-slate-600 text-[11px] font-medium">
+                                        <td className="py-3 px-2 text-center text-slate-600 text-[14px] font-medium">
                                           {item.t1_anotados || 0}/{item.t1_intentados || 0}
                                         </td>
-                                        <td className="py-3 px-2 text-center text-slate-600 text-[11px] font-medium">
+                                        <td className="py-3 px-2 text-center text-slate-600 text-[14px] font-medium">
                                           {item.t2_anotados || 0}
                                         </td>
-                                        <td className="py-3 px-2 text-center text-slate-600 text-[11px] font-medium">
+                                        <td className="py-3 px-2 text-center text-slate-600 text-[14px] font-medium">
                                           {item.t3_anotados || 0}
                                         </td>
-                                        <td className="py-3 px-4 text-center text-slate-600 text-[11px] font-medium">
+                                        <td className="py-3 px-4 text-center text-slate-600 text-[14px] font-medium">
                                           {fouls}
                                         </td>
                                       </tr>
@@ -883,7 +899,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                   })}
                                 </tbody>
                                 <tfoot className="border-t border-outline-variant bg-surface-container-low/50">
-                                  <tr className="font-bold text-[11px]">
+                                  <tr className="font-bold text-[14px]">
                                     <td className="py-3 px-4"></td>
                                     <td className="py-3 px-4 text-slate-800 uppercase">TOTALES</td>
                                     <td className="py-3 px-2 text-center text-slate-600 opacity-65">-</td>
@@ -986,27 +1002,27 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                 </div>
                                 <div className="grid grid-cols-3 gap-y-3 gap-x-2 mt-3 border-t border-on-primary-container/20 pt-3 text-center sm:text-left">
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">PTS</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">PTS</p>
                                     <p className="font-extrabold text-sm">{teamMvp.stat.puntos || 0}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">MIN</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">MIN</p>
                                     <p className="font-extrabold text-sm">{formatTiempoPartido(teamMvp.stat.tiempo_jugado)}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">T1</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">T1</p>
                                     <p className="font-extrabold text-sm">{teamMvp.stat.t1_anotados || 0}/{teamMvp.stat.t1_intentados || 0}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">T2</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">T2</p>
                                     <p className="font-extrabold text-sm">{teamMvp.stat.t2_anotados || 0}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">T3</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">T3</p>
                                     <p className="font-extrabold text-sm">{teamMvp.stat.t3_anotados || 0}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[9px] uppercase tracking-wide opacity-70">F</p>
+                                    <p className="text-[10px] uppercase tracking-wide opacity-70">F</p>
                                     <p className="font-extrabold text-sm">{(teamMvp.stat.faltas_cometidas || 0) + (teamMvp.stat.tecnicas || 0) + (teamMvp.stat.antideportivas || 0)}</p>
                                   </div>
                                 </div>
@@ -1062,8 +1078,8 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                 <ArrowUpDown size={12} /> Orden: <span className="font-semibold text-fcbq-blue uppercase tracking-wide">{sortConfig.key}</span>
               </div>
               <div className="inline-flex items-center gap-0.5 bg-slate-50 p-0.5 rounded-lg border border-slate-200">
-                <button onClick={() => setPlayerViewMode('table')} className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${playerViewMode === 'table' ? 'bg-white text-fcbq-blue shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><Table size={13} /> Tabla</button>
-                <button onClick={() => setPlayerViewMode('cards')} className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${playerViewMode === 'cards' ? 'bg-white text-fcbq-blue shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><LayoutGrid size={13} /> Tarjetas</button>
+                <button onClick={() => setPlayerViewMode('table')} className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[14px] font-semibold uppercase tracking-[0.06em] transition-all ${playerViewMode === 'table' ? 'bg-white text-fcbq-blue shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><Table size={13} /> Tabla</button>
+                <button onClick={() => setPlayerViewMode('cards')} className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[14px] font-semibold uppercase tracking-[0.06em] transition-all ${playerViewMode === 'cards' ? 'bg-white text-fcbq-blue shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><LayoutGrid size={13} /> Tarjetas</button>
               </div>
              </div>
                           {playerViewMode === 'table' && (
@@ -1073,7 +1089,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                     <thead>
                       <tr className="text-on-surface-variant opacity-70 bg-surface-container-low border-b border-outline-variant uppercase text-[10px]">
                         <TableHeader label="#" column="dorsal" className="w-[48px] py-2 px-3 font-semibold text-center" />
-                        <TableHeader label="Jugador" column="nombre" align="left" className="w-[240px] py-2 px-3 font-semibold" />
+                        <TableHeader label="Jugador" column="nombre" align="left" className="w-[110px] sm:w-[240px] py-2 px-3 font-semibold" />
                         <TableHeader label="PJ" column="partidosJugados" className="w-12 py-2 px-1 font-semibold text-center" />
                         <TableHeader label="PPG" column="ppg" className="w-12 py-2 px-1 font-semibold text-center" />
                         <TableHeader label="MPG" column="mpg" className="w-12 py-2 px-1 font-semibold text-center" />
@@ -1099,7 +1115,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                         return (
                           <React.Fragment key={player.jugadorId}>
                           <tr className={`hover:bg-surface-container-low transition-colors cursor-pointer border-l-4 ${isExpanded ? 'bg-surface-container-low/30 border-primary' : 'hover:bg-surface-container-low border-transparent'}`} onClick={() => togglePlayerExpansion(player.jugadorId)}>
-                            <td className="py-2.5 px-3 font-bold text-center text-outline text-[11px]">
+                            <td className="py-2.5 px-3 font-bold text-center text-outline text-[14px]">
                               {player.dorsal}
                             </td>
                             <td className="py-2.5 px-3 font-bold">
@@ -1113,7 +1129,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                   />
                                 </div>
                                 <div className="min-w-0 flex flex-col">
-                                  <span className="leading-none text-[12px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[140px] md:max-w-[180px]">
+                                  <span className="leading-none text-[12px] font-bold text-on-surface uppercase tracking-tight truncate max-w-[85px] xs:max-w-[120px] sm:max-w-[200px] md:max-w-[320px]">
                                     {player.nombre}
                                   </span>
                                   <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1 leading-none">
@@ -1155,9 +1171,9 @@ const TeamStats: React.FC<TeamStatsProps> = ({ equipoId, matches, plantilla, all
                                   <div className="px-4 py-5 text-sm text-slate-400 italic">Sin datos por partido.</div>
                                   ) : (
                                   <div className="overflow-x-auto hide-scrollbar">
-                                    <table className="w-full text-[11px] border-collapse">
+                                    <table className="w-full text-[14px] border-collapse">
                                       <thead>
-                                        <tr className="bg-surface-container-low/40 text-on-surface-variant uppercase text-[9px] tracking-wider border-b border-outline-variant font-bold">
+                                        <tr className="bg-surface-container-low/40 text-on-surface-variant uppercase text-[10px] tracking-wider border-b border-outline-variant font-bold">
                                           <th className="px-3 py-2 text-left">Partido</th>
                                           <th className="px-3 py-2 text-left">Resultado</th>
                                           <th className="px-3 py-2 text-center">PTS</th>

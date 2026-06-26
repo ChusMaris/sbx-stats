@@ -389,89 +389,82 @@ const LandingPage: React.FC<LandingPageProps> = ({
   const hasResults = searchResults.players.length > 0 || searchResults.teams.length > 0 || searchResults.competitions.length > 0;
 
   return (
-    <div className="space-y-md animate-fade-in pb-12 w-full max-w-7xl mx-auto px-4 mt-6">
+    <div className="flex flex-col items-center px-4 max-w-3xl mx-auto w-full mt-[10vh] md:mt-[15vh] space-y-8 pb-20 md:pb-8 animate-fade-in text-center">
       
-      {/* 1. Top: Global Search Bar */}
-      <section className="w-full text-left" ref={searchContainerRef}>
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors">search</span>
+      {/* Centered Branding Logo */}
+      <div className="flex flex-col items-center space-y-2 select-none">
+        <img 
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtRYxMJFRsY35mqSEtx2i9IFgE2_PBriyKi0BBjdYB_US6LJrclwnLGRvFJO1m7qvTeIFtQEGNDKZm3Q156ruhEf9W9zjnwkxTg1wxOtcd5BTzZZOcdz2RpyEJpC7jlAa1oeH4bDFimSOMzT_sIIRLz3aBGDhNoYdn5YMwlrF8cRdFLJrhG3eOdtlr31PMRcDudrkb_1nA3rORyo55tkY0bsFyANIz9wW4nPhMlJy_ws0otbXWfMCCFuT_y35BXHoM-CzB2zlZ7fY" 
+          alt="FedStats Logo" 
+          className="w-full max-w-[200px] h-auto object-contain transition-transform hover:scale-105 duration-300" 
+          referrerPolicy="no-referrer"
+        />
+      </div>
+
+      {/* Central Google-style Search Bar */}
+      <section className="w-full max-w-2xl text-left" ref={searchContainerRef}>
+        <div className="relative group cursor-pointer" onClick={handleInputFocus}>
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+            <span className="material-symbols-outlined text-[#727782] group-hover:text-primary transition-colors">search</span>
           </div>
           <input
             ref={searchInputRef}
-            onClick={handleInputFocus}
-            onFocus={handleInputFocus}
-            className="w-full h-14 pl-12 pr-4 bg-surface-container-lowest border border-outline-variant/50 rounded-xl shadow-sm text-body-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all cursor-pointer text-slate-800 placeholder-slate-400"
+            readOnly
+            className="w-full h-14 pl-14 pr-6 bg-white border border-[#c2c6d2] hover:shadow-md focus:shadow-lg rounded-full text-[18px] focus:ring-0 focus:border-[#c2c6d2]/30 outline-none transition-all cursor-pointer text-slate-800 placeholder-slate-400 font-medium"
             placeholder="Buscar jugadores, equipos..."
             type="text"
-            readOnly
           />
         </div>
         
-        {/* Quick Recent Chips beneath the bar */}
-        {recentSearches.length > 0 && (
-          <div className="mt-sm flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
-            <span className="text-label-sm text-on-surface-variant flex-shrink-0">RECIENTES:</span>
-            {recentSearches.slice(0, 3).map((item) => (
-              <button
-                key={`${item.id}-${item.timestamp}`}
-                onClick={() => onOpenRecent(item)}
-                className="inline-flex items-center px-3 py-1 bg-surface-container-high rounded-full text-label-sm text-on-surface-variant hover:bg-primary-fixed-dim hover:text-primary transition-colors cursor-pointer shrink-0"
-              >
-                {item.nombre}
-                <span className="material-symbols-outlined text-[14px] ml-1">history</span>
-              </button>
-            ))}
+        {/* Recientes Chips below Search Bar */}
+        <div className="mt-8 flex flex-col items-center justify-center space-y-3">
+          <span className="text-[12px] font-bold text-[#727782] uppercase tracking-widest w-full text-center">
+            BÚSQUEDAS RECIENTES
+          </span>
+          <div className="flex flex-wrap items-center justify-center gap-2 max-w-md mx-auto">
+            {recentSearches.length > 0 ? (
+              recentSearches.slice(0, 4).map((item) => (
+                <button
+                  key={`${item.id}-${item.timestamp}`}
+                  onClick={() => onOpenRecent(item)}
+                  className="inline-flex items-center px-4 py-2 bg-slate-100/85 border border-slate-200/40 rounded-full text-xs font-semibold text-slate-600 hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
+                >
+                  {item.nombre}
+                  <span className="material-symbols-outlined text-[14px] ml-1.5 opacity-60">history</span>
+                </button>
+              ))
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    navigate('/teams?search=Senior%20A');
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-slate-100/85 border border-slate-200/40 rounded-full text-xs font-semibold text-slate-600 hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
+                >
+                  Senior A 24-25
+                  <span className="material-symbols-outlined text-[14px] ml-1.5 opacity-60">history</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/players?search=Pau%20Gasol');
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-slate-100/85 border border-slate-200/40 rounded-full text-xs font-semibold text-slate-600 hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
+                >
+                  Pau Gasol
+                  <span className="material-symbols-outlined text-[14px] ml-1.5 opacity-60">history</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/teams?search=FC%20Barcelona');
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-slate-100/85 border border-slate-200/40 rounded-full text-xs font-semibold text-slate-600 hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
+                >
+                  FC Barcelona
+                  <span className="material-symbols-outlined text-[14px] ml-1.5 opacity-60">history</span>
+                </button>
+              </>
+            )}
           </div>
-        )}
-      </section>
-
-      {/* 2. Action Cards - Compact Link Style */}
-      <section className="grid grid-cols-2 gap-sm text-left">
-        <Link 
-          to="/players" 
-          className="flex items-center justify-center space-x-2 py-3 px-4 bg-primary-container/10 border border-primary-container/20 rounded-lg hover:bg-primary-container/20 transition-colors group"
-        >
-          <span className="material-symbols-outlined text-primary text-[20px]">group</span>
-          <span className="text-label-sm font-bold text-primary">JUGADORES</span>
-        </Link>
-        <Link 
-          to="/teams" 
-          className="flex items-center justify-center space-x-2 py-3 px-4 bg-secondary-container/10 border border-secondary-container/20 rounded-lg hover:bg-secondary-container/20 transition-colors group"
-        >
-          <span className="material-symbols-outlined text-secondary text-[20px]">shield</span>
-          <span className="text-label-sm font-bold text-secondary">EQUIPOS</span>
-        </Link>
-      </section>
-
-      {/* 3. Competition Filters Section */}
-      <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-md shadow-sm text-left">
-        <div className="flex items-center space-x-2 mb-md border-b border-outline-variant/20 pb-base">
-          <span className="material-symbols-outlined text-primary text-[20px]">tune</span>
-          <h2 className="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant">Filtros de Competición</h2>
-        </div>
-        
-        <CompetitionFilterForm
-          temporadas={temporadas}
-          categorias={categorias}
-          competiciones={competiciones}
-          loadingCompetitions={loadingCompetitions}
-          selectedTemporada={selectedTemporada}
-          selectedCategoria={selectedCategoria}
-          selectedFase={selectedFase}
-          selectedCompeticion={selectedCompeticion}
-          onTemporadaChange={onTemporadaChange}
-          onCategoriaChange={onCategoriaChange}
-          onFaseChange={onFaseChange}
-          onCompeticionChange={onCompeticionChange}
-        />
-      </section>
-
-      {/* 4. Bottom Banner: Visual Break */}
-      <section className="relative h-32 rounded-xl overflow-hidden shadow-sm text-left">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary to-tertiary opacity-90"></div>
-        <div className="relative z-10 h-full flex items-center px-md">
-          <p className="text-on-primary text-body-lg font-medium">Explora la base de datos más completa del baloncesto federado.</p>
         </div>
       </section>
 
